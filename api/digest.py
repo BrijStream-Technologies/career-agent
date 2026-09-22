@@ -1,9 +1,11 @@
 import json
 from http.server import BaseHTTPRequestHandler
 from career_agent.agent_orchestrator import CareerAgentOrchestrator
+from career_agent.live_job_fetcher import LiveJobFetcher
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        # 1. Fallback sample target listings
         sample_listings = [
             {
                 "id": "job_001",
@@ -28,8 +30,29 @@ class handler(BaseHTTPRequestHandler):
                 "estimated_tc": 480000,
                 "description": "Forward deployed AI lead working with customers to build AI agents, system architecture, prompt engineering, Python, P&L strategy.",
                 "source_url": "https://anthropic.com/careers/forward-deployed-lead"
+            },
+            {
+                "id": "job_003",
+                "title": "Director of AI Product Strategy",
+                "company": "Warner Music Group",
+                "location": "Remote - US",
+                "is_remote": True,
+                "base_salary_min": 260000,
+                "base_salary_max": 350000,
+                "estimated_tc": 450000,
+                "description": "Lead strategic AI music initiatives, rights registry, audio synchronization, and ad-tech monetization.",
+                "source_url": "https://wmg.com/careers/director-ai-strategy"
             }
         ]
+
+        # 2. Try fetching live jobs from public APIs
+        try:
+            fetcher = LiveJobFetcher()
+            live_jobs = fetcher.fetch_live_remote_jobs()
+            if live_jobs:
+                sample_listings.extend(live_jobs)
+        except Exception:
+            pass
 
         orchestrator = CareerAgentOrchestrator()
         digest_md = orchestrator.run_daily_pipeline(sample_listings)
