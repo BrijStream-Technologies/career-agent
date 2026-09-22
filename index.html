@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Career Agent Executive Dashboard</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --background: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --foreground: #f8fafc;
+      --muted-foreground: #94a3b8;
+      --primary: #38bdf8;
+      --primary-foreground: #0f172a;
+      --accent: #22c55e;
+    }
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .accordion-content {
+      display: none;
+    }
+    .accordion-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-5 max-w-md mx-auto">
+  
+  <!-- Header Card -->
+  <header class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 mb-4 shadow-lg">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-bold text-[var(--foreground)] tracking-tight">Career Agent Digest</h1>
+        <p class="text-xs text-[var(--muted-foreground)] font-medium">Sylvester Floyd Carter IV</p>
+      </div>
+      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Vercel Cloud Live
+      </span>
+    </div>
+    
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-[var(--border)]">
+      <div class="text-center">
+        <div class="text-xl font-extrabold text-[var(--primary)]" id="stat-scanned">4</div>
+        <div class="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Scanned</div>
+      </div>
+      <div class="text-center">
+        <div class="text-xl font-extrabold text-emerald-400" id="stat-matches">2</div>
+        <div class="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Auto-Apply</div>
+      </div>
+      <div class="text-center">
+        <div class="text-xl font-extrabold text-amber-400" id="stat-review">1</div>
+        <div class="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Review</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filter Pills -->
+  <div class="flex gap-2 mb-4 overflow-x-auto pb-1 text-xs font-semibold">
+    <button onclick="filterJobs('all')" class="filter-btn active bg-[var(--primary)] text-[var(--primary-foreground)] px-3.5 py-1.5 rounded-full transition-all">All Target Roles</button>
+    <button onclick="filterJobs('AUTO_APPLY')" class="filter-btn bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--border)] px-3.5 py-1.5 rounded-full transition-all">Auto-Apply (≥80%)</button>
+    <button onclick="filterJobs('REVIEW')" class="filter-btn bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--border)] px-3.5 py-1.5 rounded-full transition-all">Review (65–79%)</button>
+  </div>
+
+  <!-- Job Opportunities List -->
+  <main id="job-list" class="space-y-4">
+    
+    <!-- Job Card 1 -->
+    <div class="job-card auto-apply bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 shadow-md space-y-3">
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-1">ElevenLabs</span>
+          <h2 class="text-base font-bold text-[var(--foreground)] leading-snug">Principal AI Product Manager</h2>
+          <p class="text-xs text-[var(--muted-foreground)] font-medium">$360,000 Total Comp • Remote - US</p>
+        </div>
+        <span class="shrink-0 text-xs font-extrabold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">94% Fit</span>
+      </div>
+
+      <!-- Fit Progress Bar -->
+      <div>
+        <div class="w-full bg-[var(--border)] h-1.5 rounded-full overflow-hidden">
+          <div class="bg-emerald-400 h-full rounded-full" style="width: 94%"></div>
+        </div>
+      </div>
+
+      <!-- Quick Proof Pills -->
+      <div class="flex flex-wrap gap-1 text-[10px]">
+        <span class="bg-[var(--border)] text-[var(--foreground)] px-2 py-0.5 rounded">88k LOC Code Proof</span>
+        <span class="bg-[var(--border)] text-[var(--foreground)] px-2 py-0.5 rounded">455 Unit Tests</span>
+        <span class="bg-[var(--border)] text-[var(--foreground)] px-2 py-0.5 rounded">Patent PMG-2025-001</span>
+      </div>
+
+      <!-- Accordion Actions -->
+      <div class="pt-2 border-t border-[var(--border)] flex justify-between items-center text-xs font-medium">
+        <button onclick="toggleAccordion('acc-1')" class="text-[var(--primary)] hover:underline flex items-center gap-1">
+          View Outreach & Resume ▾
+        </button>
+        <button onclick="copyInMail('inmail-1', this)" class="bg-emerald-500 text-slate-950 font-bold px-3 py-1 rounded-lg text-xs shadow hover:bg-emerald-400 active:scale-95 transition-all">
+          Copy InMail Draft
+        </button>
+      </div>
+
+      <div id="acc-1" class="accordion-content pt-3 border-t border-[var(--border)] space-y-3 text-xs">
+        <div>
+          <div class="font-semibold text-[var(--foreground)] mb-1">Target Contact: <span class="text-sky-400">VP of Product</span></div>
+          <textarea id="inmail-1" readonly class="w-full bg-slate-900 text-slate-300 p-2.5 rounded-xl border border-[var(--border)] font-mono text-[11px] leading-relaxed h-24 focus:outline-none">Hi [Hiring Manager - VP of Product],
+
+I noticed ElevenLabs is hiring for the Principal AI Product Manager role. Having directed AI agents to build and deploy an 88,000 LOC media & AI governance platform with 455 passing unit tests and 3 patent applications, I bridge executive product strategy and hands-on AI building. Would love to connect.
+
+Best regards,
+Sylvester Floyd Carter IV</textarea>
+        </div>
+        <div class="p-2.5 bg-slate-900/60 rounded-xl border border-[var(--border)] text-[11px] text-[var(--muted-foreground)] space-y-1">
+          <div class="font-semibold text-[var(--foreground)]">Resume Highlights:</div>
+          <div>• Executive Strategy: Music World Sanctuary Group P&L Director</div>
+          <div>• Code Proof: 88,000 LOC, 455 passing tests, Python, Microservices</div>
+          <div>• Domain Fit: Audio ducking, statutory royalty split ledgers</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Card 2 -->
+    <div class="job-card auto-apply bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 shadow-md space-y-3">
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-1">Anthropic</span>
+          <h2 class="text-base font-bold text-[var(--foreground)] leading-snug">Forward Deployed AI Solutions Lead</h2>
+          <p class="text-xs text-[var(--muted-foreground)] font-medium">$480,000 Total Comp • Remote - US/Global</p>
+        </div>
+        <span class="shrink-0 text-xs font-extrabold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">88% Fit</span>
+      </div>
+
+      <!-- Fit Progress Bar -->
+      <div>
+        <div class="w-full bg-[var(--border)] h-1.5 rounded-full overflow-hidden">
+          <div class="bg-emerald-400 h-full rounded-full" style="width: 88%"></div>
+        </div>
+      </div>
+
+      <!-- Quick Proof Pills -->
+      <div class="flex flex-wrap gap-1 text-[10px]">
+        <span class="bg-[var(--border)] text-[var(--foreground)] px-2 py-0.5 rounded">88k LOC Code Proof</span>
+        <span class="bg-[var(--border)] text-[var(--foreground)] px-2 py-0.5 rounded">Prompt Architecture</span>
+        <span class="bg-[var(--border)] text-[var(--foreground)] px-2 py-0.5 rounded">SaaS AI Governance</span>
+      </div>
+
+      <!-- Accordion Actions -->
+      <div class="pt-2 border-t border-[var(--border)] flex justify-between items-center text-xs font-medium">
+        <button onclick="toggleAccordion('acc-2')" class="text-[var(--primary)] hover:underline flex items-center gap-1">
+          View Outreach & Resume ▾
+        </button>
+        <button onclick="copyInMail('inmail-2', this)" class="bg-emerald-500 text-slate-950 font-bold px-3 py-1 rounded-lg text-xs shadow hover:bg-emerald-400 active:scale-95 transition-all">
+          Copy InMail Draft
+        </button>
+      </div>
+
+      <div id="acc-2" class="accordion-content pt-3 border-t border-[var(--border)] space-y-3 text-xs">
+        <div>
+          <div class="font-semibold text-[var(--foreground)] mb-1">Target Contact: <span class="text-sky-400">Head of Forward Deployed AI</span></div>
+          <textarea id="inmail-2" readonly class="w-full bg-slate-900 text-slate-300 p-2.5 rounded-xl border border-[var(--border)] font-mono text-[11px] leading-relaxed h-24 focus:outline-none">Hi [Hiring Manager - Head of Forward Deployed AI],
+
+I noticed Anthropic is hiring for the Forward Deployed AI Solutions Lead role. Having built and deployed 88,000 LOC of AI proxy and governance microservices with 455 passing tests, I specialize in translating client requirements into working AI codebases. Would love to connect.
+
+Best regards,
+Sylvester Floyd Carter IV</textarea>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="mt-6 text-center text-xs text-[var(--muted-foreground)] py-4 border-t border-[var(--border)]">
+    Sylvester's Autonomous Career Agent • Vercel Cloud Active
+  </footer>
+
+  <script>
+    function toggleAccordion(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle('active');
+      }
+    }
+
+    function copyInMail(id, btn) {
+      const textarea = document.getElementById(id);
+      if (textarea) {
+        textarea.select();
+        document.execCommand('copy');
+        const origText = btn.innerText;
+        btn.innerText = 'Copied! ✓';
+        btn.classList.replace('bg-emerald-500', 'bg-sky-400');
+        setTimeout(() => {
+          btn.innerText = origText;
+          btn.classList.replace('bg-sky-400', 'bg-emerald-500');
+        }, 2000);
+      }
+    }
+
+    function filterJobs(category) {
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(b => {
+        b.classList.remove('bg-[var(--primary)]', 'text-[var(--primary-foreground)]');
+        b.classList.add('bg-[var(--card)]', 'text-[var(--muted-foreground)]');
+      });
+      event.target.classList.remove('bg-[var(--card)]', 'text-[var(--muted-foreground)]');
+      event.target.classList.add('bg-[var(--primary)]', 'text-[var(--primary-foreground)]');
+
+      const cards = document.querySelectorAll('.job-card');
+      cards.forEach(card => {
+        if (category === 'all') {
+          card.style.display = 'block';
+        } else if (category === 'AUTO_APPLY') {
+          card.style.display = card.classList.contains('auto-apply') ? 'block' : 'none';
+        } else if (category === 'REVIEW') {
+          card.style.display = card.classList.contains('review') ? 'block' : 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
