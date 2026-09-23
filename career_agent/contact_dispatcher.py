@@ -69,7 +69,7 @@ class ContactDispatcher:
     ) -> MIMEMultipart:
         msg = MIMEMultipart("alternative")
         msg["Subject"] = f"Executive Candidate Application: {job.title} - Sylvester Floyd Carter IV"
-        msg["From"] = f"{self.profile.name} <sylvester@brijstream.com>"
+        msg["From"] = f"{self.profile.name} <{self.profile.email}>"
         msg["To"] = recipient_email
 
         body_text = f"""Dear Hiring Team at {job.company},
@@ -113,11 +113,25 @@ ATTACHED ATSS RESUME:
         target_email = recipient_email or self.resolve_recipient_email(job)
         email_msg = self.construct_email_package(job, package, outreach_draft, target_email)
 
-        # Check environment variables for active API keys (Resend / SendGrid / SMTP)
+        # Check environment variables for iCloud SMTP or API key credentials
+        icloud_pass = os.environ.get("ICLOUD_APP_PASSWORD") or os.environ.get("SMTP_PASS")
         resend_api_key = os.environ.get("RESEND_API_KEY")
-        smtp_host = os.environ.get("SMTP_HOST")
 
-        status = "DISPATCHED" if (resend_api_key or smtp_host or self.auto_send) else "SIMULATED_DISPATCH"
+        status = "SIMULATED_DISPATCH"
+
+        # Live dispatch via iCloud SMTP if App-Specific Password is configured
+        if icloud_pass:
+            try:
+                import smtplib
+                with smtplib.SMTP("smtp.mail.me.com", 587) as server:
+                    server.starttls()
+                    server.login(self.profile.email, icloud_pass)
+                    server.send_message(email_msg)
+                status = "DISPATCHED"
+            except Exception as err:
+                status = f"DISPATCH_ERROR: {str(err)}"
+        elif resend_api_key or self.auto_send:
+            status = "DISPATCHED" if resend_api_key else "SIMULATED_DISPATCH"
 
         record = DispatchRecord(
             job_id=job.id,

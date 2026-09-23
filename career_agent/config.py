@@ -11,6 +11,7 @@ class VerifiedCandidateProfile:
     name: str = "Sylvester Floyd Carter IV"
     title: str = "AI Systems Architect & Executive Strategy Leader"
     education: str = "BA in Finance, Clark Atlanta University"
+    email: str = "sylvesterfcarter@icloud.com"
     location: str = "Atlanta, GA (Targeting Remote US / Global)"
     
     # Verified Technical Metrics
