@@ -244,7 +244,8 @@ class BrowserApplicant:
                 self._fill_field(page, ["last_name", "last-name", "lname"], " ".join(self.profile.name.split()[1:]))
                 self._fill_field(page, ["name", "full_name", "full-name"], self.profile.name)
                 self._fill_field(page, ["email", "email_address"], self.profile.email)
-                self._fill_field(page, ["phone", "mobile", "telephone"], self.profile.phone)
+                phone_val = getattr(self.profile, "phone", "Available Upon Request")
+                self._fill_field(page, ["phone", "mobile", "telephone"], phone_val)
                 self._fill_field(page, ["location", "city", "address"], self.profile.location)
 
                 # 4. Fill cover letter / notes / system steering brief

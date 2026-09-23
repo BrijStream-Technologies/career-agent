@@ -12,6 +12,7 @@ class VerifiedCandidateProfile:
     title: str = "AI Systems Architect & Executive Strategy Leader"
     education: str = "BA in Finance, Clark Atlanta University"
     email: str = "sylvesterfcarter@icloud.com"
+    phone: str = "Available Upon Request"
     location: str = "Montgomery, TX (Targeting Remote US / Global)"
     
     # Verified Technical Metrics

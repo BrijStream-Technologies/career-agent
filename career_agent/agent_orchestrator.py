@@ -42,10 +42,13 @@ class CareerAgentOrchestrator:
             score = self.scorer.score_job(job)
             scored_jobs.append((job, score))
 
-        # Phase 3 & 4: Tailor Packages, Outreach Drafts & Auto-Dispatch
+        # Phase 3 & 4: Tailor Packages, Outreach Drafts, Online Web Prefill & Auto-Dispatch
         packages: Dict[str, ApplicationPackage] = {}
         outreach_drafts: Dict[str, ExecutiveOutreachDraft] = {}
         dispatches: Dict[str, DispatchRecord] = {}
+
+        from career_agent.browser_applicant import BrowserApplicant
+        browser_applicant = BrowserApplicant(self.profile, headless=True)
 
         for job, score in scored_jobs:
             if score.recommendation in ["AUTO_APPLY", "REVIEW"]:
@@ -55,10 +58,13 @@ class CareerAgentOrchestrator:
                 draft = self.outreach_finder.create_outreach_draft(job)
                 outreach_drafts[job.id] = draft
 
-                # Automated Identification & Contact Dispatch for High & Medium Fit Roles
-                if score.recommendation in ["AUTO_APPLY", "REVIEW"]:
-                    dispatch_rec = self.dispatcher.dispatch_outreach(job, pkg, draft)
-                    dispatches[job.id] = dispatch_rec
+                # Run Playwright Chrome Browser Online Pre-fill for AUTO_APPLY roles
+                if score.recommendation == "AUTO_APPLY":
+                    browser_res = browser_applicant.apply_online(job, pkg, submit_live=False)
+
+                # Automated Executive Identification & Contact Dispatch
+                dispatch_rec = self.dispatcher.dispatch_outreach(job, pkg, draft)
+                dispatches[job.id] = dispatch_rec
 
         # Phase 5: Build Executive Digest
         digest_markdown = self.digest_builder.build_digest_markdown(
