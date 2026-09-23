@@ -286,5 +286,11 @@ def test_audit_details_reconciliation_matrix(profile, config, sample_remote_job)
     assert "Verified Candidate Receipt:" in pkg.translucent_brief_markdown
     assert "Audit & Scoring Rationale:" in pkg.translucent_brief_markdown
 
+def test_browser_applicant_instantiation(profile):
+    from career_agent.browser_applicant import BrowserApplicant
+    applicant = BrowserApplicant(profile, headless=True)
+    assert applicant.profile.name == profile.name
+    assert applicant.screenshots_dir.exists()
+
 
 
