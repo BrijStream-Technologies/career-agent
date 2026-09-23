@@ -56,28 +56,30 @@ class PackageTailorer:
 
         return f"""# TRANSLUCENT AGENT ALIGNMENT & EXECUTION BRIEF
 **Target Role:** {job.title} @ {job.company}
-**Candidate:** {self.profile.name} ({self.profile.email})
+**Candidate:** {self.profile.name} ({self.profile.email}) | {self.profile.location}
 **Empirical Reconciliation Match:** {score_result.total_score}% / 100% (Audited Proof Matrix)
 
 ---
-## 🎯 100-POINT POSITION RECONCILIATION MATRIX (EVIDENCE AUDIT)
-*This empirical audit maps position requirements directly to verified code telemetry, unit tests, patents, and P&L receipts to eliminate arbitrary scoring.*
+## 👑 SECTION 1: PROMPTING & SYSTEM STEERING PROFILE (THE COMPETITIVE MOAT)
+*This is Sylvester's primary strategic differentiator: operating as a System Steering Officer who translates high-stakes operational domain directives directly into 88,000+ lines of production code without writing manual syntax.*
+
+- **System Steering Officer Persona:** Operates at the executive system layer. Provides outcome-driven directives, mandatory architectural constraints, and test criteria while trusting AI agents to generate syntax under 100% verification rules.
+- **Ruthless Non-Pleasing Truth Mandates:** Explicitly commands AI agents to eliminate sycophantic/pleasing biases ("this is not a pleasing mission, this is an honest fact-based analysis"), enforcing brute-force reality checks and log audits before code approval.
+- **Socratic Mechanism Probing:** Systematically probes under-the-hood system mechanics (data flow, security boundaries, non-LLM document generation, OAuth authentication) before authorizing automated execution.
+- **Institutional Domain-to-Code Translation:** Translates 20+ years of high-stakes music, publishing, and fintech operations (statutory licensing, 70/10/20 ad splits, audio ducking, Reg CF rules) directly into prompt directives that ship production software.
+
+---
+## 🎯 SECTION 2: 100-POINT POSITION RECONCILIATION MATRIX (EVIDENCE AUDIT)
+*This empirical audit maps position requirements directly to verified code telemetry, unit tests, patents, and operational P&L receipts to eliminate arbitrary scoring.*
 
 {audit_section}
 
 ---
-## 💻 SUMMARY 1: CODE SUMMARY TELEMETRY
+## 💻 SECTION 3: CODE TELEMETRY & INTELLECTUAL PROPERTY
 - **Production Codebase:** 88,000+ lines of multi-tenant microservice code across BrijStream (Media Streaming) and Kyvryn/Themis (AI Governance Proxy).
-- **Test Integrity:** 455 passing unit tests out of 456 automated test assertions.
+- **Test Suite Integrity:** 455 passing unit tests out of 456 automated test assertions.
 - **Intellectual Property:** 3 patent filings including Provisional PMG-2025-001 (Autonomous Media Synchronization matching energy, mood, tempo, audio ducking).
 - **Fintech & Royalty Ledgers:** Built 70/10/20 ad revenue split engine and instant USDC stablecoin split settlement protocol.
-
----
-## 🧠 SUMMARY 2: PROMPTING & STRATEGY EXECUTION PROFILE
-- **Meta-Prompting Persona:** Operates as a System Steering Officer. Provides high-level domain constraints and outcome-driven directives, bypassing syntax micromanagement.
-- **Ruthless Non-Pleasing Truth Enforcement:** Explicitly commands AI agents to eliminate "pleasing/romantic" biases, enforcing empirical reality checks and code truthfulness audits.
-- **Socratic Mechanism Probing:** Systematically probes system mechanics under the hood (data flow, security boundaries, non-LLM document generation, OAuth authentication).
-- **Domain Bridge Translation:** Translates complex commercial structures (Reg CF crowdfunding, statutory licensing pools) directly into prompt directives that ship production code.
 """
 
     def generate_ats_resume(self, job: JobListing, score_result: FitScoreResult) -> str:

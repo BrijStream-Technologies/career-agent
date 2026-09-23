@@ -113,7 +113,17 @@ ATS MODIFIED RESUME:
 <body>
   <div class="container">
     <div class="header">Executive Candidate Alignment Brief</div>
-    <div class="subtitle">{job.title} at {job.company} • Candidate: Sylvester Floyd Carter IV</div>
+    <div class="subtitle">{job.title} at {job.company} • Candidate: Sylvester Floyd Carter IV (Montgomery, TX)</div>
+
+    <!-- PRIMARY MOAT: PROMPTING & SYSTEM STEERING PROFILE -->
+    <div class="pillar-box pillar-purple" style="margin-top: 16px;">
+      <div class="pillar-title">👑 PRIMARY COMPETITIVE MOAT: PROMPTING & SYSTEM STEERING PROFILE</div>
+      <ul style="margin: 0; padding-left: 18px; font-size: 13px;">
+        <li><strong>System Steering Officer Persona:</strong> High-level executive steering using outcome-driven directives, mandatory architectural constraints, and test criteria—bypassing manual syntax micromanagement.</li>
+        <li><strong>Ruthless Non-Pleasing Truth Mandates:</strong> Commands AI agents to eliminate sycophantic/pleasing biases ("this is an honest fact-based analysis"), enforcing empirical reality checks and log audits before code approval.</li>
+        <li><strong>Institutional Domain-to-Code Translation:</strong> Translates 20+ years of high-stakes entertainment operations (RIAA 12x Diamond, 32x & 4x Grammy rosters, statutory licensing, 70/10/20 splits) directly into prompt rules that ship production code.</li>
+      </ul>
+    </div>
 
     <!-- 100-POINT POSITION RECONCILIATION HIGHLIGHT CARD -->
     <div class="reconcile-card">
@@ -122,7 +132,7 @@ ATS MODIFIED RESUME:
       <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 12px;">Empirical alignment audit mapping target role requirements to candidate code telemetry & strategy receipts:</div>
       <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 12px; margin-top: 8px;">
         <div style="color: #38bdf8; font-weight: 700; margin-bottom: 4px;">• Executive Strategy (30/30 pts):</div>
-        <div style="color: #94a3b8; margin-left: 10px;">Requirement: P&L strategy, team leadership, acquisition execution.<br>Candidate Receipt: Music World / Sanctuary Group Director of Strategy + Yysman Inc CEO exit.</div>
+        <div style="color: #94a3b8; margin-left: 10px;">Requirement: P&L strategy, team leadership, acquisition execution.<br>Candidate Receipt: Music World Sanctuary Group Senior Director of Operations + Yysman CEO + Brij Brands Advisor.</div>
         
         <div style="color: #38bdf8; font-weight: 700; margin-top: 8px; margin-bottom: 4px;">• AI Engineering & Code (29-30/30 pts):</div>
         <div style="color: #94a3b8; margin-left: 10px;">Requirement: AI systems architecture, agentic orchestration, Python microservices.<br>Candidate Receipt: 88,000+ LOC microservices, 455/456 unit tests passed, System Steering prompt architecture.</div>
@@ -135,23 +145,13 @@ ATS MODIFIED RESUME:
       </div>
     </div>
 
-    <!-- DUAL SUMMARY 1: CODE SUMMARY TELEMETRY -->
+    <!-- CODE TELEMETRY -->
     <div class="pillar-box">
-      <div class="pillar-title">💻 SUMMARY 1: CODE SUMMARY TELEMETRY</div>
+      <div class="pillar-title">💻 CODE TELEMETRY & INTELLECTUAL PROPERTY</div>
       <ul style="margin: 0; padding-left: 18px; font-size: 13px;">
         <li><strong>88,000+ Lines of Production Code:</strong> Multi-tenant microservice platforms across media streaming (BrijStream) and enterprise AI governance SaaS (Kyvryn/Themis).</li>
         <li><strong>455/456 Passing Unit Tests:</strong> Maintained high-fidelity test suite coverage.</li>
         <li><strong>3 Patent Applications:</strong> Author of Provisional PMG-2025-001 (Autonomous Media Sync) and 70/10/20 ad impression revenue split ledgers.</li>
-      </ul>
-    </div>
-
-    <!-- DUAL SUMMARY 2: PROMPTING & STRATEGY EXECUTION PROFILE -->
-    <div class="pillar-box pillar-purple">
-      <div class="pillar-title">🧠 SUMMARY 2: PROMPTING & STRATEGY EXECUTION PROFILE</div>
-      <ul style="margin: 0; padding-left: 18px; font-size: 13px;">
-        <li><strong>System Steering Officer Persona:</strong> High-level executive steering using outcome-driven directives, bypassing syntax micromanagement.</li>
-        <li><strong>Ruthless Non-Pleasing Truth Enforcement:</strong> Commands AI agents to eliminate "pleasing" biases and enforce empirical code verification.</li>
-        <li><strong>Institutional Domain Bridge:</strong> Translates 25-yr media/fintech strategy directly into agent prompt rules that ship software.</li>
       </ul>
     </div>
 
