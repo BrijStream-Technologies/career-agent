@@ -228,8 +228,30 @@ def test_web_server_handler_instantiation():
 # --- CONTACT DISPATCHER TESTS ---
 def test_contact_dispatcher_resolution(profile, sample_remote_job):
     from career_agent.contact_dispatcher import ContactDispatcher
+    from career_agent.package_tailorer import ApplicationPackage
+    from career_agent.outreach_finder import ExecutiveOutreachDraft
+
     dispatcher = ContactDispatcher(profile, auto_send=False)
     recipient = dispatcher.resolve_recipient_email(sample_remote_job)
+    assert "@" in recipient
+
+    pkg = ApplicationPackage(
+        job_id=sample_remote_job.id,
+        company=sample_remote_job.company,
+        job_title=sample_remote_job.title,
+        translucent_brief_markdown="Brief",
+        tailored_resume_markdown="Resume",
+        cover_letter_markdown="Cover Letter",
+        verification_status="VERIFIED_NO_CLICHES"
+    )
+    draft = ExecutiveOutreachDraft(
+        job_id=sample_remote_job.id,
+        company=sample_remote_job.company,
+        target_role=sample_remote_job.title,
+        target_title_suggestion="VP of Product",
+        personalized_message="Test Message"
+    )
+    dispatcher.dispatch_outreach(sample_remote_job, pkg, draft)
     assert dispatcher.is_already_contacted(sample_remote_job.id) is True
 
 def test_contact_verifier_dns_mx_validation():
