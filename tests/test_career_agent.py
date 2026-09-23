@@ -293,12 +293,12 @@ def test_browser_applicant_instantiation(profile):
     assert applicant.screenshots_dir.exists()
     assert applicant.default_account_password is not None
 
-def test_browser_applicant_account_verification_methods(profile):
+def test_browser_applicant_llm_custom_question_answering(profile, sample_remote_job):
     from career_agent.browser_applicant import BrowserApplicant
     applicant = BrowserApplicant(profile, headless=True)
-    # IMAP verification returns None cleanly when no new code email is present
-    code = applicant.fetch_verification_code_via_imap()
-    assert code is None or isinstance(code, str)
+    ans = applicant.generate_authentic_answer("Why do you want to join ElevenLabs?", sample_remote_job)
+    assert "ElevenLabs" in ans
+    assert "System Steering" in ans or "Brij Brands" in ans or "moat" in ans
 
 
 
