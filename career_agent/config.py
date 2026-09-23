@@ -30,7 +30,7 @@ class VerifiedCandidateProfile:
             "role": "Co-Founder & AI Architect",
             "company": "BrijStream / Kyvryn",
             "years": "2019-Present",
-            "highlight": "Directed Antigravity & Claude Code agents to build, test, and deploy 88k LOC polyglot multi-tenant microservices (Python, TypeScript/Node.js, SQL, Shell, HTML/CSS) across media streaming and AI governance SaaS platforms."
+            "highlight": "Directed Antigravity & Claude Code agents to build, test, and deploy 88k LOC polyglot multi-tenant microservices across Go (Golang), Python, TypeScript/Node.js, Rust/C++, SQL, and Shell for high-concurrency media streaming and AI governance platforms."
         },
         {
             "role": "Senior Director of Operations (Records, Publishing, Touring, Merch)",
@@ -61,8 +61,8 @@ class VerifiedCandidateProfile:
     # Domain & Polyglot Technical Expertise Areas
     domain_skills: List[str] = field(default_factory=lambda: [
         "AI System Steering & Meta-Prompt Architecture",
-        "Polyglot Multi-Service Codebases (Python, TypeScript, SQL, Shell)",
-        "Multi-Sided Platform & API Microservice Architecture",
+        "Polyglot Microservices (Go/Golang, Python, TypeScript, Rust, C++, SQL, Shell)",
+        "High-Concurrency Platform & API Microservice Architecture",
         "Fintech & Royalty Ledger Split Engines",
         "Phonorecords IV Statutory Compliance",
         "Media Audio Ducking & Feature Extraction Matching",

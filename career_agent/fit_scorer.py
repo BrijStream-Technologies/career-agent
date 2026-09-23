@@ -52,16 +52,16 @@ class FitScorer:
 
         # Pillar 2: AI Engineering, Polyglot Code Proof & System Architecture (Max 30 pts)
         ai_score = 0
-        ai_keywords = ["ai", "prompt", "llm", "orchestration", "agent", "python", "typescript", "javascript", "node", "sql", "full-stack", "test", "architecture", "microservice"]
+        ai_keywords = ["ai", "prompt", "llm", "orchestration", "agent", "go", "golang", "rust", "c++", "cpp", "python", "typescript", "javascript", "node", "sql", "full-stack", "test", "architecture", "microservice"]
         ai_matches = [kw for kw in ai_keywords if kw in desc_lower or kw in title_lower]
         if ai_matches:
             ai_score = min(30, 15 + len(ai_matches) * 3)
-            matched_proofs.append(f"AI Polyglot Code Match: 88,000 LOC (Python, TypeScript, SQL, Shell) & 455/456 unit tests passed")
+            matched_proofs.append(f"AI Polyglot Code Match: 88,000 LOC (Go, Python, TypeScript, Rust/C++, SQL) & 455/456 unit tests passed")
             deduct_reason = "Full 30 pts awarded: 88,000+ LOC polyglot microservices, 455/456 passing tests, and system steering prompt profile." if ai_score == 30 else f"Awarded {int(ai_score)}/30 pts. 88k LOC + 455 unit tests verified."
             audit_details["AI Engineering & Code"] = {
                 "score": f"{int(ai_score)}/30 pts",
                 "target_requirement": f"Hands-on AI systems architecture, agentic orchestration, polyglot software engineering ({', '.join(ai_matches[:3])}).",
-                "candidate_receipt": "88,000+ lines of polyglot production code (Python, TypeScript/Node.js, SQL, Shell, HTML/CSS) across BrijStream & Kyvryn; 455 passing unit tests out of 456; author of System Steering prompt architecture.",
+                "candidate_receipt": "88,000+ lines of polyglot production code (Go/Golang, Python, TypeScript/Node.js, Rust/C++, SQL, Shell) across BrijStream & Kyvryn; 455 passing unit tests out of 456; author of System Steering prompt architecture.",
                 "deduction_rationale": deduct_reason
             }
         else:

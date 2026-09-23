@@ -149,7 +149,7 @@ ATS MODIFIED RESUME:
     <div class="pillar-box">
       <div class="pillar-title">💻 CODE TELEMETRY & INTELLECTUAL PROPERTY</div>
       <ul style="margin: 0; padding-left: 18px; font-size: 13px;">
-        <li><strong>88,000+ Lines of Polyglot Production Code:</strong> Multi-tenant microservices across Python, TypeScript/Node.js, SQL, Shell, and HTML/CSS (BrijStream & Kyvryn/Themis).</li>
+        <li><strong>88,000+ Lines of Polyglot Production Code:</strong> Multi-tenant microservices across Go (Golang), Python, TypeScript/Node.js, Rust/C++, SQL, and Shell (BrijStream & Kyvryn/Themis).</li>
         <li><strong>455/456 Passing Unit Tests:</strong> Maintained high-fidelity test suite coverage.</li>
         <li><strong>3 Patent Applications:</strong> Author of Provisional PMG-2025-001 (Autonomous Media Sync) and 70/10/20 ad impression revenue split ledgers.</li>
       </ul>
