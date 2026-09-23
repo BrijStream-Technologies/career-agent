@@ -291,6 +291,14 @@ def test_browser_applicant_instantiation(profile):
     applicant = BrowserApplicant(profile, headless=True)
     assert applicant.profile.name == profile.name
     assert applicant.screenshots_dir.exists()
+    assert applicant.default_account_password is not None
+
+def test_browser_applicant_account_verification_methods(profile):
+    from career_agent.browser_applicant import BrowserApplicant
+    applicant = BrowserApplicant(profile, headless=True)
+    # IMAP verification returns None cleanly when no new code email is present
+    code = applicant.fetch_verification_code_via_imap()
+    assert code is None or isinstance(code, str)
 
 
 
