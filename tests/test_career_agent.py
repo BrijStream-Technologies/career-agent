@@ -228,7 +228,7 @@ def test_contact_dispatcher_execution(profile, config, sample_remote_job):
 
     assert record.job_id == sample_remote_job.id
     assert record.company == "ElevenLabs"
-    assert record.status in ["DISPATCHED", "SIMULATED_DISPATCH"]
+    assert record.status in ["DISPATCHED", "SIMULATED_DISPATCH", "DRAFTED_TO_ICLOUD"]
     assert dispatcher.is_already_contacted(sample_remote_job.id) is True
 
 
