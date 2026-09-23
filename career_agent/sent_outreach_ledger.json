@@ -16,5 +16,23 @@
     "dispatch_timestamp": "2026-09-22T19:57:30.267028",
     "status": "DISPATCHED",
     "subject": "Executive Candidate Application: Principal AI Product Manager - Sylvester Floyd Carter IV"
+  },
+  "job_001": {
+    "job_id": "job_001",
+    "company": "ElevenLabs",
+    "job_title": "Principal AI Product Manager",
+    "recipient_email": "careers@elevenlabs.com",
+    "dispatch_timestamp": "2026-09-22T20:14:08.664993",
+    "status": "SIMULATED_DISPATCH",
+    "subject": "Executive Candidate Application: Principal AI Product Manager - Sylvester Floyd Carter IV"
+  },
+  "job_002": {
+    "job_id": "job_002",
+    "company": "Anthropic",
+    "job_title": "Forward Deployed AI Solutions Lead",
+    "recipient_email": "careers@anthropic.com",
+    "dispatch_timestamp": "2026-09-22T20:14:08.695183",
+    "status": "SIMULATED_DISPATCH",
+    "subject": "Executive Candidate Application: Forward Deployed AI Solutions Lead - Sylvester Floyd Carter IV"
   }
 }
