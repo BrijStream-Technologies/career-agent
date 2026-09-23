@@ -38,8 +38,8 @@ class FitScorer:
             audit_details["Executive Strategy"] = {
                 "score": f"{int(exec_score)}/30 pts",
                 "target_requirement": f"Requires executive leadership, product strategy, and P&L oversight ({', '.join(exec_matches[:3])}).",
-                "candidate_receipt": "Director of Strategy at Music World / Sanctuary Group (managed multi-million P&L, catalog acquisition) + Founder/CEO Yysman Inc (acquired).",
-                "deduction_rationale": "Full 30 pts awarded based on 20+ yrs proven multi-million dollar P&L and corporate exit history." if exec_score == 30 else f"Awarded {int(exec_score)}/30 pts based on strategy alignment. Minor gap: candidate focus is on AI-native product execution over legacy enterprise frameworks."
+                "candidate_receipt": "Senior Director of Operations @ Music World Sanctuary Group (Records, Publishing, Touring, Merch); Founder @ Yysman, Inc. (Mary Mary [4x Grammy]); Manager for Lisa 'Left Eye' Lopes (TLC [12x Diamond]); Advisor to Park Bom (2NE1 [Billboard 200]).",
+                "deduction_rationale": "Full 30 pts awarded based on 20+ yrs managing operations across RIAA Diamond-certified and multi-Grammy-winning global assets." if exec_score == 30 else f"Awarded {int(exec_score)}/30 pts based on executive strategy alignment."
             }
         else:
             exec_score = 10

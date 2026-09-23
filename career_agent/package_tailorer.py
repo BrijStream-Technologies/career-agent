@@ -87,7 +87,7 @@ class PackageTailorer:
 **{self.profile.title}** | {self.profile.email} | {self.profile.location}
 
 ## EXECUTIVE SUMMARY
-Executive Strategy Leader and AI Systems Architect with 20+ years of multi-million dollar P&L leadership, media strategy, and hands-on AI product orchestration. Directed AI agents (Antigravity & Claude Code) to build, test, and deploy 88,000+ lines of production microservice code across media streaming and AI governance. Author of 3 patent applications in autonomous media synchronization and instant split settlement.
+Senior Executive Operations Leader and AI Systems Architect with 20+ years managing multi-million dollar P&L operations, global rights registries, and multi-sided supply chains across RIAA Diamond-certified and multi-Grammy-winning entertainment enterprises. Formerly managed Lisa "Left Eye" Lopes of TLC (5x Grammy Winner, RIAA 12x Diamond-Certified, 65M+ global sales); founded Yysman, Inc. managing Mary Mary (4x Grammy Winners) and Platinum Producers; served as Senior Director of Operations at Music World Sanctuary Group overseeing Records, Publishing, Touring, and Merch divisions for a global roster featuring Destiny's Child/Beyoncé, Mary J. Blige, and Rock & Roll Hall of Fame inductees; and advised Park Bom of 2NE1 (Billboard 200 K-pop pioneers). Directs AI agents (Antigravity & Claude Code) as a System Steering Officer to architect, test, and deploy 88,000+ lines of production microservice code across media streaming and AI governance while maintaining 455/456 passing unit tests. Author of 3 patent applications in autonomous audio-scene synchronization and instant split settlement.
 
 ## 100-POINT POSITION RECONCILIATION MATCH: {score_result.total_score}% FOR {job.title.upper()} AT {job.company.upper()}
 {proof_summary}
@@ -99,11 +99,16 @@ Executive Strategy Leader and AI Systems Architect with 20+ years of multi-milli
 - Maintained 455/456 passing automated unit test suite.
 - Formulated and filed patent applications for autonomous scene-scoring algorithms matching audio energy, mood, and tempo under speech dialogue.
 
-### Director of Strategy | Music World / Sanctuary Group (2004 – 2006)
-- Managed multi-million dollar P&L operations, corporate media licensing, and global artist catalog monetization.
+### Senior Director of Operations (Records, Publishing, Touring, Merch) | Music World / Sanctuary Group (2004 – 2006)
+- Managed 4 core operational divisions for global #1 Urban artist management enterprise (Roster: Destiny's Child/Beyoncé [32x Grammy Winner], Mary J. Blige [9x Grammy Winner], Earth Wind & Fire, Chaka Khan).
+- Directed multi-million dollar global touring logistics, master recording delivery pipelines, statutory publishing licensing, and merchandise supply chains.
 
-### Founder & CEO | Yysman, Inc. (1999 – 2004)
-- Founded tech enterprise from inception through successful corporate acquisition.
+### Founder & CEO / Artist Manager | Yysman, Inc. (1999 – 2004)
+- Managed premier artist management enterprise representing Mary Mary (4x Grammy Winners, 3x NAACP Image Awards), Myron Butler & Levi, Ted & Sheri, and Platinum Producers.
+
+### Artist Manager & Executive Strategic Advisor | Independent / Advisory (1997 – Present)
+- Managed Lisa "Left Eye" Lopes of TLC (5x Grammy Winner, RIAA 12x Diamond Certified, 65M+ records sold).
+- Executive Advisor to Park Bom of K-Pop group 2NE1 (Billboard 200 pioneers, MAMA Daesang Winners, 66M+ digital downloads).
 
 ## EDUCATION & PATENTS
 - **{self.profile.education}**
@@ -115,11 +120,11 @@ Executive Strategy Leader and AI Systems Architect with 20+ years of multi-milli
 
 I am writing to express my strong interest in the {job.title} role.
 
-What sets my background apart is the combination of senior executive P&L leadership and direct hands-on AI systems architecture. Having served as Director of Strategy at Music World / Sanctuary Group managing multi-million dollar P&L portfolios, I understand product strategy from a commercial standpoint. At the same time, I actively direct AI agents using Antigravity and Claude Code to build, test, and deploy production software.
+What sets my background apart is the combination of senior executive operations leadership across world-class global enterprises and direct hands-on AI systems architecture. Having served as Senior Director of Operations at Music World / Sanctuary Group overseeing Records, Publishing, Touring, and Merch divisions, and having managed/advised roster assets from TLC to Destiny's Child/Beyoncé and 2NE1, I understand complex multi-sided operations from a commercial standpoint. At the same time, I actively direct AI agents using Antigravity and Claude Code as a System Steering Officer to build, test, and deploy production software.
 
 Recently, I architected and built an 88,000-line multi-sided media platform and AI governance proxy engine that maintains 455 passing unit tests out of 456, alongside authoring patent applications for autonomous audio-scene synchronization algorithms.
 
-I respect {job.company}'s work in this space and would welcome the opportunity to discuss how my strategic background and AI building capabilities can contribute directly to your product roadmap.
+I respect {job.company}'s work in this space and would welcome the opportunity to discuss how my strategic operational background and AI building capabilities can contribute directly to your product roadmap.
 
 Sincerely,
 

@@ -12,7 +12,7 @@ class VerifiedCandidateProfile:
     title: str = "AI Systems Architect & Executive Strategy Leader"
     education: str = "BA in Finance, Clark Atlanta University"
     email: str = "sylvesterfcarter@icloud.com"
-    location: str = "Atlanta, GA (Targeting Remote US / Global)"
+    location: str = "Montgomery, TX (Targeting Remote US / Global)"
     
     # Verified Technical Metrics
     lines_of_code_built: int = 88000
@@ -33,16 +33,22 @@ class VerifiedCandidateProfile:
             "highlight": "Directed Antigravity & Claude Code agents to build, test, and deploy 88k LOC multi-sided media streaming and AI governance SaaS platforms."
         },
         {
-            "role": "Director of Strategy",
+            "role": "Senior Director of Operations (Records, Publishing, Touring, Merch)",
             "company": "Music World / Sanctuary Group",
             "years": "2004-2006",
-            "highlight": "Multi-million dollar P&L responsibility, strategic licensing, artist catalogue management."
+            "highlight": "Managed 4 core operational divisions for global #1 Urban artist management enterprise (Roster: Destiny's Child/Beyoncé [32x Grammy Winner], Mary J. Blige, Earth Wind & Fire, Chaka Khan)."
         },
         {
-            "role": "Founder & CEO",
+            "role": "Founder & CEO / Artist Manager",
             "company": "Yysman, Inc.",
             "years": "1999-2004",
-            "highlight": "Founded and successfully navigated tech acquisition."
+            "highlight": "Managed premier artist management enterprise representing Mary Mary (4x Grammy Winners), Myron Butler & Levi, Ted & Sheri, and Platinum Producers."
+        },
+        {
+            "role": "Artist Manager & Executive Advisor",
+            "company": "Independent / Advisory",
+            "years": "1997-Present",
+            "highlight": "Managed Lisa 'Left Eye' Lopes of TLC (5x Grammy Winner, RIAA 12x Diamond Certified, 65M+ records sold); advised Park Bom of K-Pop group 2NE1 (Billboard 200 pioneers, 66M+ digital downloads)."
         }
     ])
     

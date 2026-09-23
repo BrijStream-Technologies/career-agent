@@ -60,6 +60,9 @@ def test_config_profile_metrics(profile):
     assert profile.total_unit_tests == 456
     assert len(profile.patents) >= 3
     assert "Sanctuary Group" in profile.executive_experience[1]["company"]
+    assert "Montgomery, TX" in profile.location
+    assert "Mary Mary" in profile.executive_experience[2]["highlight"]
+    assert "Lisa 'Left Eye' Lopes" in profile.executive_experience[3]["highlight"]
 
 # --- JOB SCANNER TESTS ---
 def test_job_scanner_filtering(config, sample_remote_job, sample_onsite_job):
