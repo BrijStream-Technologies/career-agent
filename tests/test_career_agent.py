@@ -69,7 +69,25 @@ def test_config_profile_metrics(profile):
 def test_job_scanner_filtering(config, sample_remote_job, sample_onsite_job):
     scanner = JobScanner(config)
     assert scanner.is_valid_candidate_job(sample_remote_job) is True
+    # sample_onsite_job is $60k (< $100k min threshold), so it gets filtered out
     assert scanner.is_valid_candidate_job(sample_onsite_job) is False
+
+def test_job_scanner_hybrid_100k_accepted(config):
+    scanner = JobScanner(config)
+    hybrid_100k_job = JobListing(
+        id="hybrid_pm_austin",
+        title="Senior AI Product Manager",
+        company="Spotify",
+        location="Hybrid - Austin, TX",
+        is_remote=False,
+        base_salary_min=110000,
+        base_salary_max=140000,
+        estimated_tc=140000,
+        posting_date=datetime.now() - timedelta(days=2),
+        description="Drive AI recommendations and music audio metadata.",
+        source_url="https://example.com/job"
+    )
+    assert scanner.is_valid_candidate_job(hybrid_100k_job) is True
 
 def test_job_scanner_deduplication(config):
     scanner = JobScanner(config)

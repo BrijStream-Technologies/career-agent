@@ -79,11 +79,17 @@ class JobSearchConfig:
         "VP of AI Product Strategy",
         "Director of AI Product Strategy",
         "AI Systems Architect",
-        "Prompt Engineering Lead"
+        "Prompt Engineering Lead",
+        "Product Manager",
+        "Software Engineer",
+        "Solutions Architect",
+        "Technical Director"
     ])
-    min_base_salary: int = 180000
-    min_total_compensation: int = 250000
-    require_remote: bool = True
+    min_base_salary: int = 100000
+    min_total_compensation: int = 100000
+    require_remote: bool = False  # Allows In-Office, Hybrid, and Remote
+    work_arrangements: List[str] = field(default_factory=lambda: ["Remote", "Hybrid", "In-Office"])
+    geographic_scope: List[str] = field(default_factory=lambda: ["Domestic (US)", "Global"])
     max_posting_age_days: int = 45
     min_fit_score_for_apply: int = 80
     min_fit_score_for_review: int = 65

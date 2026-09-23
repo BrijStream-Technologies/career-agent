@@ -99,20 +99,20 @@ class FitScorer:
                 "deduction_rationale": "Base 5 pts. Role domain differs from candidate's specialized media/fintech/governance IP."
             }
 
-        # Pillar 4: Remote & Compensation Fit (Max 20 pts)
-        comp_score = 0
-        if job.is_remote:
-            comp_score += 10
+        # Pillar 4: Location, Arrangement & Compensation Fit (Max 20 pts)
+        comp_score = 10  # Base points awarded for accepted arrangement (Remote, Hybrid, or In-Office)
         if job.estimated_tc >= self.config.min_total_compensation or job.base_salary_max >= self.config.min_base_salary:
             comp_score += 10
         elif job.base_salary_max >= self.config.min_base_salary * 0.8:
             comp_score += 5
 
-        comp_deduct = "Full 20 pts awarded: 100% Remote + Total Comp meets/exceeds $300k target." if comp_score == 20 else "Partial points awarded: Match on location or compensation target."
-        audit_details["Remote & Comp"] = {
+        arr_type = "Remote" if job.is_remote else ("Hybrid" if "hybrid" in desc_lower or "hybrid" in job.location.lower() else "In-Office / Hybrid")
+        comp_deduct = f"Full 20 pts awarded: {arr_type} arrangement + Total Comp (${job.estimated_tc:,}) meets/exceeds $100k threshold." if comp_score == 20 else f"Partial points awarded for arrangement and compensation."
+        
+        audit_details["Location & Comp"] = {
             "score": f"{int(comp_score)}/20 pts",
-            "target_requirement": f"100% Remote, Target TC >= ${self.config.min_total_compensation:,}.",
-            "candidate_receipt": f"Location: {job.location} | Comp: ${job.estimated_tc:,} Total Comp.",
+            "target_requirement": f"Accepts Remote, Hybrid, or In-Office (Domestic/Global), Target TC >= ${self.config.min_total_compensation:,}.",
+            "candidate_receipt": f"Location: {job.location} ({arr_type}) | Comp: ${job.estimated_tc:,} Total Comp.",
             "deduction_rationale": comp_deduct
         }
 

@@ -41,6 +41,42 @@ class handler(BaseHTTPRequestHandler):
                 "estimated_tc": 450000,
                 "description": "Lead strategic AI music initiatives, rights registry, audio synchronization, and ad-tech monetization.",
                 "source_url": "https://wmg.com/careers/director-ai-strategy"
+            },
+            {
+                "id": "job_004",
+                "title": "Senior AI Product Manager",
+                "company": "Spotify",
+                "location": "Hybrid - New York, NY / Austin, TX",
+                "is_remote": False,
+                "base_salary_min": 160000,
+                "base_salary_max": 210000,
+                "estimated_tc": 210000,
+                "description": "Drive AI recommendations, music audio metadata, prompt orchestration, and multi-sided artist platform features.",
+                "source_url": "https://spotifyjobs.com/careers"
+            },
+            {
+                "id": "job_005",
+                "title": "AI Systems Architect",
+                "company": "Soundcloud",
+                "location": "In-Office - London, UK / Global",
+                "is_remote": False,
+                "base_salary_min": 130000,
+                "base_salary_max": 160000,
+                "estimated_tc": 160000,
+                "description": "Architect AI content governance, audio feature extraction microservices, python system steering, and royalty ledger splits.",
+                "source_url": "https://soundcloud.com/jobs"
+            },
+            {
+                "id": "job_006",
+                "title": "AI Solutions Lead",
+                "company": "Epidemic Sound",
+                "location": "Hybrid - Global / US",
+                "is_remote": False,
+                "base_salary_min": 105000,
+                "base_salary_max": 125000,
+                "estimated_tc": 125000,
+                "description": "Lead customer AI implementations, soundtrack matching, audio ducking workflows, and Python orchestration pipelines.",
+                "source_url": "https://epidemicsound.com/careers"
             }
         ]
 
