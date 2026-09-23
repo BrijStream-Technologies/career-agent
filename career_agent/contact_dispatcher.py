@@ -119,17 +119,22 @@ ATTACHED ATSS RESUME:
 
         status = "SIMULATED_DISPATCH"
 
-        # Live dispatch via iCloud SMTP if App-Specific Password is configured
+        # Live dispatch via iCloud SMTP or save to iCloud Drafts folder if App-Specific Password is configured
         if icloud_pass:
-            try:
-                import smtplib
-                with smtplib.SMTP("smtp.mail.me.com", 587) as server:
-                    server.starttls()
-                    server.login(self.profile.email, icloud_pass)
-                    server.send_message(email_msg)
-                status = "DISPATCHED"
-            except Exception as err:
-                status = f"DISPATCH_ERROR: {str(err)}"
+            # Option A: Save to iCloud Drafts Folder via IMAP if draft_mode is requested
+            save_as_draft = os.environ.get("SAVE_AS_DRAFT", "false").lower() == "true"
+            if save_as_draft:
+                status = self.save_to_icloud_drafts(email_msg, icloud_pass)
+            else:
+                try:
+                    import smtplib
+                    with smtplib.SMTP("smtp.mail.me.com", 587) as server:
+                        server.starttls()
+                        server.login(self.profile.email, icloud_pass)
+                        server.send_message(email_msg)
+                    status = "DISPATCHED"
+                except Exception as err:
+                    status = f"DISPATCH_ERROR: {str(err)}"
         elif resend_api_key or self.auto_send:
             status = "DISPATCHED" if resend_api_key else "SIMULATED_DISPATCH"
 
@@ -147,3 +152,22 @@ ATTACHED ATSS RESUME:
         self._save_ledger()
 
         return record
+
+    def save_to_icloud_drafts(self, email_msg: MIMEMultipart, icloud_pass: str) -> str:
+        """
+        Saves un-sent draft email into Apple iCloud Mail Drafts folder via IMAP.
+        """
+        try:
+            import imaplib, time
+            imap = imaplib.IMAP4_SSL("imap.mail.me.com", 993)
+            imap.login(self.profile.email, icloud_pass)
+            
+            # Select or create Drafts folder
+            imap.select("Drafts")
+            raw_msg = email_msg.as_bytes()
+            imap.append("Drafts", "\\Draft", imaplib.Time2Internaldate(time.time()), raw_msg)
+            imap.logout()
+            return "DRAFTED_TO_ICLOUD"
+        except Exception as err:
+            return f"DRAFT_ERROR: {str(err)}"
+
