@@ -1,128 +1,38 @@
 {
-  "elevenlabs_principal_pm": {
-    "job_id": "elevenlabs_principal_pm",
+  "elevenlabs_principal_pm_v3": {
+    "job_id": "elevenlabs_principal_pm_v3",
     "company": "ElevenLabs",
     "job_title": "Principal AI Product Manager",
     "recipient_email": "careers@elevenlabs.com",
-    "dispatch_timestamp": "2026-09-22T20:48:27.250562",
+    "dispatch_timestamp": "2026-09-22T21:02:43.856441",
     "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Principal AI Product Manager - Sylvester Floyd Carter IV"
+    "subject": "Executive Candidate Brief: Principal AI Product Manager - Sylvester Floyd Carter IV"
+  },
+  "anthropic_fd_lead_v3": {
+    "job_id": "anthropic_fd_lead_v3",
+    "company": "Anthropic",
+    "job_title": "Forward Deployed AI Solutions Lead",
+    "recipient_email": "careers@anthropic.com",
+    "dispatch_timestamp": "2026-09-22T21:02:45.679460",
+    "status": "DRAFTED_TO_ICLOUD",
+    "subject": "Executive Candidate Brief: Forward Deployed AI Solutions Lead - Sylvester Floyd Carter IV"
   },
   "anthropic_fd_lead": {
     "job_id": "anthropic_fd_lead",
     "company": "Anthropic",
     "job_title": "Forward Deployed AI Solutions Lead",
     "recipient_email": "careers@anthropic.com",
-    "dispatch_timestamp": "2026-09-22T20:48:29.191539",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Forward Deployed AI Solutions Lead - Sylvester Floyd Carter IV"
+    "dispatch_timestamp": "2026-09-22T21:03:01.191120",
+    "status": "SIMULATED_DISPATCH",
+    "subject": "Executive Candidate Brief: Forward Deployed AI Solutions Lead - Sylvester Floyd Carter IV"
   },
-  "remotive_2091140": {
-    "job_id": "remotive_2091140",
-    "company": "Sanctuary Computer Inc",
-    "job_title": "Senior Shopify Developer",
-    "recipient_email": "careers@sanctuarycomputerinc.com",
-    "dispatch_timestamp": "2026-09-22T20:48:30.734286",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Senior Shopify Developer - Sylvester Floyd Carter IV"
-  },
-  "remotive_2091131": {
-    "job_id": "remotive_2091131",
-    "company": "Lemon.io",
-    "job_title": "Senior AI Engineer",
-    "recipient_email": "careers@lemonio.com",
-    "dispatch_timestamp": "2026-09-22T20:48:32.262088",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Senior AI Engineer - Sylvester Floyd Carter IV"
-  },
-  "remotive_2091130": {
-    "job_id": "remotive_2091130",
-    "company": "Lemon.io",
-    "job_title": "Senior .NET Full-stack Developer",
-    "recipient_email": "careers@lemonio.com",
-    "dispatch_timestamp": "2026-09-22T20:48:33.491132",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Senior .NET Full-stack Developer - Sylvester Floyd Carter IV"
-  },
-  "remotive_2091129": {
-    "job_id": "remotive_2091129",
-    "company": "Lemon.io",
-    "job_title": "Senior Data Scientist",
-    "recipient_email": "careers@lemonio.com",
-    "dispatch_timestamp": "2026-09-22T20:48:35.042744",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Senior Data Scientist - Sylvester Floyd Carter IV"
-  },
-  "remotive_1919266": {
-    "job_id": "remotive_1919266",
-    "company": "A.Team",
-    "job_title": "Senior Independent AI Engineer / Architect",
-    "recipient_email": "careers@ateam.com",
-    "dispatch_timestamp": "2026-09-22T20:48:36.433639",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Senior Independent AI Engineer / Architect - Sylvester Floyd Carter IV"
-  },
-  "remotive_2069746": {
-    "job_id": "remotive_2069746",
-    "company": "Mitre Media",
-    "job_title": "Tech Lead Full-Stack Rails Engineer",
-    "recipient_email": "careers@mitremedia.com",
-    "dispatch_timestamp": "2026-09-22T20:48:38.218709",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Tech Lead Full-Stack Rails Engineer - Sylvester Floyd Carter IV"
-  },
-  "remotive_2091101": {
-    "job_id": "remotive_2091101",
-    "company": "Lemon.io",
-    "job_title": "Senior React Full-stack Developer",
-    "recipient_email": "careers@lemonio.com",
-    "dispatch_timestamp": "2026-09-22T20:48:39.659985",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Senior React Full-stack Developer - Sylvester Floyd Carter IV"
-  },
-  "remotive_2091100": {
-    "job_id": "remotive_2091100",
-    "company": "Lemon.io",
-    "job_title": "Senior QA Engineer",
-    "recipient_email": "careers@lemonio.com",
-    "dispatch_timestamp": "2026-09-22T20:48:41.171296",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Senior QA Engineer - Sylvester Floyd Carter IV"
-  },
-  "remotive_2091099": {
-    "job_id": "remotive_2091099",
-    "company": "Lemon.io",
-    "job_title": "Senior DevOps Engineer",
-    "recipient_email": "careers@lemonio.com",
-    "dispatch_timestamp": "2026-09-22T20:48:42.625878",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Senior DevOps Engineer - Sylvester Floyd Carter IV"
-  },
-  "arbeitnow_remote-founding-head-of-gtm-cipherscale-london-395123": {
-    "job_id": "arbeitnow_remote-founding-head-of-gtm-cipherscale-london-395123",
-    "company": "OpenVPN",
-    "job_title": "Founding Head of GTM - Cipherscale",
-    "recipient_email": "careers@openvpn.com",
-    "dispatch_timestamp": "2026-09-22T20:48:44.197201",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Founding Head of GTM - Cipherscale - Sylvester Floyd Carter IV"
-  },
-  "elevenlabs_principal_pm_v2": {
-    "job_id": "elevenlabs_principal_pm_v2",
+  "elevenlabs_principal_pm": {
+    "job_id": "elevenlabs_principal_pm",
     "company": "ElevenLabs",
     "job_title": "Principal AI Product Manager",
     "recipient_email": "careers@elevenlabs.com",
-    "dispatch_timestamp": "2026-09-22T20:55:42.785194",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Principal AI Product Manager - Sylvester Floyd Carter IV"
-  },
-  "anthropic_fd_lead_v2": {
-    "job_id": "anthropic_fd_lead_v2",
-    "company": "Anthropic",
-    "job_title": "Forward Deployed AI Solutions Lead",
-    "recipient_email": "careers@anthropic.com",
-    "dispatch_timestamp": "2026-09-22T20:55:44.334941",
-    "status": "DRAFTED_TO_ICLOUD",
-    "subject": "Executive Candidate Application: Forward Deployed AI Solutions Lead - Sylvester Floyd Carter IV"
+    "dispatch_timestamp": "2026-09-22T21:03:01.221508",
+    "status": "SIMULATED_DISPATCH",
+    "subject": "Executive Candidate Brief: Principal AI Product Manager - Sylvester Floyd Carter IV"
   }
 }

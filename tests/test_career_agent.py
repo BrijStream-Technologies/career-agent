@@ -231,4 +231,23 @@ def test_contact_dispatcher_execution(profile, config, sample_remote_job):
     assert record.status in ["DISPATCHED", "SIMULATED_DISPATCH", "DRAFTED_TO_ICLOUD"]
     assert dispatcher.is_already_contacted(sample_remote_job.id) is True
 
+def test_audit_details_reconciliation_matrix(profile, config, sample_remote_job):
+    scorer = FitScorer(profile, config)
+    score_result = scorer.score_job(sample_remote_job)
+    
+    assert "audit_details" in dir(score_result)
+    assert len(score_result.audit_details) == 4
+    assert "target_requirement" in score_result.audit_details["Executive Strategy"]
+    assert "candidate_receipt" in score_result.audit_details["Executive Strategy"]
+    assert "deduction_rationale" in score_result.audit_details["Executive Strategy"]
+
+    tailorer = PackageTailorer(profile)
+    pkg = tailorer.build_tailored_package(sample_remote_job, score_result)
+    
+    assert "100-POINT POSITION RECONCILIATION MATRIX (EVIDENCE AUDIT)" in pkg.translucent_brief_markdown
+    assert "Job Requirement:" in pkg.translucent_brief_markdown
+    assert "Verified Candidate Receipt:" in pkg.translucent_brief_markdown
+    assert "Audit & Scoring Rationale:" in pkg.translucent_brief_markdown
+
+
 
