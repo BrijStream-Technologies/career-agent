@@ -135,13 +135,13 @@ ATS MODIFIED RESUME:
         <div style="color: #94a3b8; margin-left: 10px;">Requirement: P&L strategy, team leadership, acquisition execution.<br>Candidate Receipt: Music World Sanctuary Group Senior Director of Operations + Yysman CEO + Brij Brands Advisor.</div>
         
         <div style="color: #38bdf8; font-weight: 700; margin-top: 8px; margin-bottom: 4px;">• AI Engineering & Code (29-30/30 pts):</div>
-        <div style="color: #94a3b8; margin-left: 10px;">Requirement: AI systems architecture, agentic orchestration, Python microservices.<br>Candidate Receipt: 88,000+ LOC microservices, 455/456 unit tests passed, System Steering prompt architecture.</div>
+        <div style="color: #94a3b8; margin-left: 10px;">Requirement: AI systems architecture, agentic orchestration, polyglot software engineering.<br>Candidate Receipt: 88,000+ LOC polyglot microservices (Python, TypeScript, SQL, Shell), 455/456 unit tests passed, System Steering prompt architecture.</div>
         
         <div style="color: #38bdf8; font-weight: 700; margin-top: 8px; margin-bottom: 4px;">• Domain & IP Fit (20/20 pts):</div>
         <div style="color: #94a3b8; margin-left: 10px;">Requirement: IP rights management, audio sync, fintech ledgers, AI SaaS.<br>Candidate Receipt: Provisional Patent PMG-2025-001 (Autonomous Media Sync) + 70/10/20 royalty split ledgers.</div>
         
         <div style="color: #38bdf8; font-weight: 700; margin-top: 8px; margin-bottom: 4px;">• Remote & Comp Fit (20/20 pts):</div>
-        <div style="color: #94a3b8; margin-left: 10px;">Requirement: 100% Remote, Target TC >= $300k.<br>Candidate Receipt: Fully aligned with remote work model and compensation structure.</div>
+        <div style="color: #94a3b8; margin-left: 10px;">Requirement: Accepts Remote, Hybrid, or In-Office (Domestic/Global), Target TC >= $100k.<br>Candidate Receipt: Fully aligned with compensation and location parameters.</div>
       </div>
     </div>
 
@@ -149,7 +149,7 @@ ATS MODIFIED RESUME:
     <div class="pillar-box">
       <div class="pillar-title">💻 CODE TELEMETRY & INTELLECTUAL PROPERTY</div>
       <ul style="margin: 0; padding-left: 18px; font-size: 13px;">
-        <li><strong>88,000+ Lines of Production Code:</strong> Multi-tenant microservice platforms across media streaming (BrijStream) and enterprise AI governance SaaS (Kyvryn/Themis).</li>
+        <li><strong>88,000+ Lines of Polyglot Production Code:</strong> Multi-tenant microservices across Python, TypeScript/Node.js, SQL, Shell, and HTML/CSS (BrijStream & Kyvryn/Themis).</li>
         <li><strong>455/456 Passing Unit Tests:</strong> Maintained high-fidelity test suite coverage.</li>
         <li><strong>3 Patent Applications:</strong> Author of Provisional PMG-2025-001 (Autonomous Media Sync) and 70/10/20 ad impression revenue split ledgers.</li>
       </ul>
