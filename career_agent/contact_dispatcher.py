@@ -210,9 +210,11 @@ ATS MODIFIED RESUME:
         icloud_pass = os.environ.get("ICLOUD_APP_PASSWORD") or os.environ.get("SMTP_PASS")
         resend_api_key = os.environ.get("RESEND_API_KEY")
 
-        status = "SIMULATED_DISPATCH"
-
-        if icloud_pass:
+        # Enforce Strict Standard Gating:
+        # Only dispatch or populate drafts if executive contact is officially verified with direct email & live MX proof.
+        if not self.verifier.is_officially_verified(verified_contact):
+            status = "HOLD_UNVERIFIED_CONTACT"
+        elif icloud_pass:
             save_as_draft = os.environ.get("SAVE_AS_DRAFT", "false").lower() == "true"
             if save_as_draft:
                 status = self.save_to_icloud_drafts(email_msg, icloud_pass)
@@ -228,6 +230,8 @@ ATS MODIFIED RESUME:
                     status = f"DISPATCH_ERROR: {str(err)}"
         elif resend_api_key or self.auto_send:
             status = "DISPATCHED" if resend_api_key else "SIMULATED_DISPATCH"
+        else:
+            status = "HOLD_UNVERIFIED_CONTACT"
 
         record = DispatchRecord(
             job_id=job.id,

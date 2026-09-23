@@ -262,8 +262,11 @@ def test_contact_verifier_dns_mx_validation():
     assert contact.company == "ElevenLabs"
     assert "Mati Staniszewski" in contact.recipient_name or "Co-Founder" in contact.recipient_title
     assert "elevenlabs.io" in contact.recipient_email
-    assert contact.verification_status in ["VERIFIED_EXECUTIVE_DIRECT", "VERIFIED_EXECUTIVE_PATTERN", "VERIFIED_MX_DELIVERABLE"]
-    assert contact.confidence_score >= 80
+    assert contact.verification_status in ["VERIFIED_EXECUTIVE_DIRECT", "UNVERIFIED_DOMAIN_FAILED"]
+
+    unverified = verifier.discover_and_verify_executive_contact("Unknown AI Corp", "Senior ML Engineer")
+    assert verifier.is_officially_verified(unverified) is False
+    assert unverified.verification_status in ["UNVERIFIED_EXECUTIVE_HOLD", "UNVERIFIED_DOMAIN_FAILED"]
 
 def test_audit_details_reconciliation_matrix(profile, config, sample_remote_job):
     scorer = FitScorer(profile, config)

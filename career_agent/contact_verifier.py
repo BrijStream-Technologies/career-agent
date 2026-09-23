@@ -1,6 +1,7 @@
 """
 Contact Verifier module for Sylvester's Autonomous Career Agent.
 Provides real-time executive contact discovery, title resolution, DNS MX record validation, and email deliverability verification.
+Strict Standard Enforcement: No synthetic email fallbacks, no generic careers@ placeholders, zero false-positive MX records.
 """
 
 from dataclasses import dataclass, field
@@ -19,37 +20,34 @@ class VerifiedContact:
     recipient_name: str
     recipient_title: str
     recipient_email: str
-    verification_status: str  # "VERIFIED_EXECUTIVE_DIRECT", "VERIFIED_MX_PATTERN", "VERIFIED_MX_CAREERS"
+    verification_status: str  # "VERIFIED_EXECUTIVE_DIRECT", "UNVERIFIED_EXECUTIVE_HOLD", "UNVERIFIED_DOMAIN_FAILED"
     mx_records_found: List[str] = field(default_factory=list)
-    confidence_score: int = 95  # 0-100%
+    confidence_score: int = 0  # 0-100%
 
 # Known Executive & Hiring Manager Directory for Key AI / Tech Companies
 EXECUTIVE_DIRECTORY = {
     "elevenlabs": [
         {"name": "Mati Staniszewski", "title": "Co-Founder & CEO", "email_pattern": "mati@elevenlabs.io"},
-        {"name": "Piotr Dabkowski", "title": "Co-Founder & CTO", "email_pattern": "piotr@elevenlabs.io"},
-        {"name": "Head of Executive Recruiting", "title": "VP of Talent & Engineering", "email_pattern": "careers@elevenlabs.io"}
+        {"name": "Piotr Dabkowski", "title": "Co-Founder & CTO", "email_pattern": "piotr@elevenlabs.io"}
     ],
     "anthropic": [
         {"name": "Dario Amodei", "title": "CEO & Co-Founder", "email_pattern": "dario@anthropic.com"},
-        {"name": "Daniela Amodei", "title": "President & Co-Founder", "email_pattern": "daniela@anthropic.com"},
-        {"name": "Forward Deployed AI Lead", "title": "Head of Solutions Architecture", "email_pattern": "careers@anthropic.com"}
+        {"name": "Daniela Amodei", "title": "President & Co-Founder", "email_pattern": "daniela@anthropic.com"}
     ],
     "warnermusicgroup": [
-        {"name": "Robert Kyncl", "title": "CEO, Warner Music Group", "email_pattern": "robert.kyncl@wmg.com"},
-        {"name": "Head of AI Product Strategy", "title": "Chief Digital & Technology Officer", "email_pattern": "careers@wmg.com"}
+        {"name": "Robert Kyncl", "title": "CEO, Warner Music Group", "email_pattern": "robert.kyncl@wmg.com"}
+    ],
+    "wmg": [
+        {"name": "Robert Kyncl", "title": "CEO, Warner Music Group", "email_pattern": "robert.kyncl@wmg.com"}
     ],
     "spotify": [
-        {"name": "Gustav Söderström", "title": "Co-CEO & Chief Product Officer", "email_pattern": "gustav@spotify.com"},
-        {"name": "Head of Personalization & AI", "title": "VP of Engineering & Product", "email_pattern": "careers@spotify.com"}
+        {"name": "Gustav Söderström", "title": "Co-CEO & Chief Product Officer", "email_pattern": "gustav@spotify.com"}
     ],
     "soundcloud": [
-        {"name": "Eliah Seton", "title": "CEO, SoundCloud", "email_pattern": "eliah@soundcloud.com"},
-        {"name": "Head of AI & Engineering", "title": "VP of Product Infrastructure", "email_pattern": "careers@soundcloud.com"}
+        {"name": "Eliah Seton", "title": "CEO, SoundCloud", "email_pattern": "eliah@soundcloud.com"}
     ],
     "epidemicsound": [
-        {"name": "Oscar Höglund", "title": "CEO & Co-Founder", "email_pattern": "oscar@epidemicsound.com"},
-        {"name": "Head of AI Music Tech", "title": "VP of Product Engineering", "email_pattern": "careers@epidemicsound.com"}
+        {"name": "Oscar Höglund", "title": "CEO & Co-Founder", "email_pattern": "oscar@epidemicsound.com"}
     ]
 }
 
@@ -70,20 +68,26 @@ class ContactVerifier:
     ) -> VerifiedContact:
         """
         Discovers exact executive contact, title, and email for target company,
-        and runs DNS MX deliverability validation.
+        and runs strict DNS MX deliverability validation.
         """
         company_key = self.clean_domain(company)
         domain = fallback_domain or f"{company_key}.com"
         if company_key == "elevenlabs":
             domain = "elevenlabs.io"
-        elif company_key == "warnermusicgroup" or company_key == "wmg":
+        elif company_key in ["warnermusicgroup", "wmg"]:
             domain = "wmg.com"
 
         # 1. Check Executive Directory match
         if company_key in EXECUTIVE_DIRECTORY:
             exec_info = EXECUTIVE_DIRECTORY[company_key][0]
             mx_records = self.verify_dns_mx_records(domain)
-            status = "VERIFIED_EXECUTIVE_DIRECT" if mx_records else "VERIFIED_EXECUTIVE_PATTERN"
+            if mx_records:
+                status = "VERIFIED_EXECUTIVE_DIRECT"
+                score = 98
+            else:
+                status = "UNVERIFIED_DOMAIN_FAILED"
+                score = 0
+            
             return VerifiedContact(
                 company=company,
                 recipient_name=exec_info["name"],
@@ -91,43 +95,53 @@ class ContactVerifier:
                 recipient_email=exec_info["email_pattern"],
                 verification_status=status,
                 mx_records_found=mx_records,
-                confidence_score=98 if mx_records else 90
+                confidence_score=score
             )
 
-        # 2. Pattern Generator & Live MX Verification for Unknown Companies
-        exec_name = f"Head of {job_title.replace('Principal', '').replace('Senior', '').strip()}"
-        exec_title = f"VP of Engineering / Product Strategy ({company})"
-        pattern_email = f"careers@{domain}"
-
+        # 2. Strict Hold for Unknown/Unverified Executive Contacts
         mx_records = self.verify_dns_mx_records(domain)
-        status = "VERIFIED_MX_DELIVERABLE" if mx_records else "PATTERN_MATCHED_MX_VALID"
+        status = "UNVERIFIED_EXECUTIVE_HOLD" if mx_records else "UNVERIFIED_DOMAIN_FAILED"
 
         return VerifiedContact(
             company=company,
-            recipient_name=exec_name,
-            recipient_title=exec_title,
-            recipient_email=pattern_email,
+            recipient_name="UNRESOLVED Executive Contact",
+            recipient_title=f"Target Executive ({company})",
+            recipient_email=f"unverified@{domain}",
             verification_status=status,
             mx_records_found=mx_records,
-            confidence_score=92 if mx_records else 80
+            confidence_score=0
         )
+
+    def is_officially_verified(self, contact: VerifiedContact) -> bool:
+        """
+        Enforces strict compliance standard:
+        Must be officially confirmed executive direct email with verified live MX records.
+        """
+        if contact.verification_status != "VERIFIED_EXECUTIVE_DIRECT":
+            return False
+        if contact.confidence_score < 90:
+            return False
+        if not contact.mx_records_found:
+            return False
+        email = contact.recipient_email.lower().strip()
+        if not email or "@" not in email:
+            return False
+        if any(email.startswith(prefix) for prefix in ["unverified", "careers@", "info@", "jobs@", "support@", "contact@"]):
+            return False
+        return True
 
     def verify_dns_mx_records(self, domain: str) -> List[str]:
         """
         Verifies domain mail server existence using Python socket DNS lookup for MX / IP records.
+        Strict Mode: No false positive fallbacks allowed.
         """
         mx_servers = []
         try:
-            # Check host address resolution
             addrs = socket.getaddrinfo(domain, 25, socket.AF_INET, socket.SOCK_STREAM)
             if addrs:
                 mx_servers.append(f"mail.{domain} (Resolved IP: {addrs[0][4][0]})")
         except Exception:
             pass
-
-        # Fallback simulated MX check if socket DNS is isolated
-        if not mx_servers:
-            mx_servers.append(f"mail.{domain} (MX Deliverable)")
 
         return mx_servers
 
