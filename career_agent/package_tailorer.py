@@ -106,9 +106,11 @@ Senior Executive Operations Leader and AI Systems Architect with 20+ years manag
 ### Founder & CEO / Artist Manager | Yysman, Inc. (1999 – 2004)
 - Managed premier artist management enterprise representing Mary Mary (4x Grammy Winners, 3x NAACP Image Awards), Myron Butler & Levi, Ted & Sheri, and Platinum Producers.
 
-### Artist Manager & Executive Strategic Advisor | Independent / Advisory (1997 – Present)
-- Managed Lisa "Left Eye" Lopes of TLC (5x Grammy Winner, RIAA 12x Diamond Certified, 65M+ records sold).
+### Executive Strategic Advisor | Brij Brands (2018 – Present)
 - Executive Advisor to Park Bom of K-Pop group 2NE1 (Billboard 200 pioneers, MAMA Daesang Winners, 66M+ digital downloads).
+
+### Artist Manager | Left Eye Management / Independent (1997 – 2002)
+- Managed Lisa "Left Eye" Lopes of TLC (5x Grammy Winner, RIAA 12x Diamond Certified, 65M+ records sold).
 
 ## EDUCATION & PATENTS
 - **{self.profile.education}**

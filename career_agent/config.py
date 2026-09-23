@@ -45,10 +45,16 @@ class VerifiedCandidateProfile:
             "highlight": "Managed premier artist management enterprise representing Mary Mary (4x Grammy Winners), Myron Butler & Levi, Ted & Sheri, and Platinum Producers."
         },
         {
-            "role": "Artist Manager & Executive Advisor",
-            "company": "Independent / Advisory",
-            "years": "1997-Present",
-            "highlight": "Managed Lisa 'Left Eye' Lopes of TLC (5x Grammy Winner, RIAA 12x Diamond Certified, 65M+ records sold); advised Park Bom of K-Pop group 2NE1 (Billboard 200 pioneers, 66M+ digital downloads)."
+            "role": "Executive Strategic Advisor",
+            "company": "Brij Brands",
+            "years": "2018-Present",
+            "highlight": "Executive Advisor to Park Bom of K-Pop group 2NE1 (Billboard 200 pioneers, MAMA Daesang Winners, 66M+ digital downloads)."
+        },
+        {
+            "role": "Artist Manager",
+            "company": "Left Eye Management / Independent",
+            "years": "1997-2002",
+            "highlight": "Managed Lisa 'Left Eye' Lopes of TLC (5x Grammy Winner, RIAA 12x Diamond Certified, 65M+ records sold)."
         }
     ])
     
