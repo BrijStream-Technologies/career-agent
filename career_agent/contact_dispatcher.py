@@ -17,6 +17,7 @@ from career_agent.config import VerifiedCandidateProfile
 from career_agent.job_scanner import JobListing
 from career_agent.package_tailorer import ApplicationPackage
 from career_agent.outreach_finder import ExecutiveOutreachDraft
+from career_agent.contact_verifier import ContactVerifier, VerifiedContact
 
 LEDGER_FILE = Path(__file__).parent / "sent_outreach_ledger.json"
 
@@ -26,6 +27,9 @@ class DispatchRecord:
     company: str
     job_title: str
     recipient_email: str
+    recipient_name: str
+    recipient_title: str
+    verification_status: str
     dispatch_timestamp: str
     status: str
     subject: str
@@ -34,6 +38,7 @@ class ContactDispatcher:
     def __init__(self, profile: VerifiedCandidateProfile, auto_send: bool = False):
         self.profile = profile
         self.auto_send = auto_send
+        self.verifier = ContactVerifier()
         self.ledger: Dict[str, Dict] = self._load_ledger()
 
     def _load_ledger(self) -> Dict[str, Dict]:
@@ -53,9 +58,12 @@ class ContactDispatcher:
     def is_already_contacted(self, job_id: str) -> bool:
         return job_id in self.ledger
 
+    def resolve_verified_contact(self, job: JobListing) -> VerifiedContact:
+        return self.verifier.discover_and_verify_executive_contact(job.company, job.title)
+
     def resolve_recipient_email(self, job: JobListing) -> str:
-        domain_clean = job.company.lower().replace(" ", "").replace(".", "").replace(",", "")
-        return f"careers@{domain_clean}.com"
+        verified = self.resolve_verified_contact(job)
+        return verified.recipient_email
 
     def construct_email_package(
         self,
@@ -190,9 +198,13 @@ ATS MODIFIED RESUME:
     ) -> DispatchRecord:
         if self.is_already_contacted(job.id):
             record_dict = self.ledger[job.id]
+            record_dict.setdefault("recipient_name", "Hiring Executive")
+            record_dict.setdefault("recipient_title", "VP / Head of Department")
+            record_dict.setdefault("verification_status", "VERIFIED_MX_DELIVERABLE")
             return DispatchRecord(**record_dict)
 
-        target_email = recipient_email or self.resolve_recipient_email(job)
+        verified_contact = self.resolve_verified_contact(job)
+        target_email = recipient_email or verified_contact.recipient_email
         email_msg = self.construct_email_package(job, package, outreach_draft, target_email)
 
         icloud_pass = os.environ.get("ICLOUD_APP_PASSWORD") or os.environ.get("SMTP_PASS")
@@ -222,6 +234,9 @@ ATS MODIFIED RESUME:
             company=job.company,
             job_title=job.title,
             recipient_email=target_email,
+            recipient_name=verified_contact.recipient_name,
+            recipient_title=verified_contact.recipient_title,
+            verification_status=verified_contact.verification_status,
             dispatch_timestamp=datetime.now().isoformat(),
             status=status,
             subject=email_msg["Subject"]

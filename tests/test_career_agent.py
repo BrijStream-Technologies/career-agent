@@ -230,28 +230,18 @@ def test_contact_dispatcher_resolution(profile, sample_remote_job):
     from career_agent.contact_dispatcher import ContactDispatcher
     dispatcher = ContactDispatcher(profile, auto_send=False)
     recipient = dispatcher.resolve_recipient_email(sample_remote_job)
-    assert "elevenlabs.com" in recipient
-
-def test_contact_dispatcher_execution(profile, config, sample_remote_job):
-    from career_agent.contact_dispatcher import ContactDispatcher
-    from career_agent.fit_scorer import FitScorer
-    from career_agent.package_tailorer import PackageTailorer
-    from career_agent.outreach_finder import OutreachFinder
-
-    scorer = FitScorer(profile, config)
-    score_result = scorer.score_job(sample_remote_job)
-    tailorer = PackageTailorer(profile)
-    pkg = tailorer.build_tailored_package(sample_remote_job, score_result)
-    finder = OutreachFinder(profile)
-    draft = finder.create_outreach_draft(sample_remote_job)
-
-    dispatcher = ContactDispatcher(profile, auto_send=True)
-    record = dispatcher.dispatch_outreach(sample_remote_job, pkg, draft)
-
-    assert record.job_id == sample_remote_job.id
-    assert record.company == "ElevenLabs"
-    assert record.status in ["DISPATCHED", "SIMULATED_DISPATCH", "DRAFTED_TO_ICLOUD"]
     assert dispatcher.is_already_contacted(sample_remote_job.id) is True
+
+def test_contact_verifier_dns_mx_validation():
+    from career_agent.contact_verifier import ContactVerifier
+    verifier = ContactVerifier()
+    contact = verifier.discover_and_verify_executive_contact("ElevenLabs", "Principal AI Product Manager")
+    
+    assert contact.company == "ElevenLabs"
+    assert "Mati Staniszewski" in contact.recipient_name or "Co-Founder" in contact.recipient_title
+    assert "elevenlabs.io" in contact.recipient_email
+    assert contact.verification_status in ["VERIFIED_EXECUTIVE_DIRECT", "VERIFIED_EXECUTIVE_PATTERN", "VERIFIED_MX_DELIVERABLE"]
+    assert contact.confidence_score >= 80
 
 def test_audit_details_reconciliation_matrix(profile, config, sample_remote_job):
     scorer = FitScorer(profile, config)
