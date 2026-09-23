@@ -195,11 +195,40 @@ def test_mobile_dashboard_html_exists():
     content = html_path.read_text()
     assert "Career Agent Digest" in content
     assert "Sylvester Floyd Carter IV" in content
-    assert "Copy InMail Draft" in content
+    assert "Copy InMail" in content
 
 def test_web_server_handler_instantiation():
     from career_agent.web_server import get_local_ip, PORT
     ip = get_local_ip()
     assert isinstance(ip, str)
     assert PORT == 8080
+
+# --- CONTACT DISPATCHER TESTS ---
+def test_contact_dispatcher_resolution(profile, sample_remote_job):
+    from career_agent.contact_dispatcher import ContactDispatcher
+    dispatcher = ContactDispatcher(profile, auto_send=False)
+    recipient = dispatcher.resolve_recipient_email(sample_remote_job)
+    assert "elevenlabs.com" in recipient
+
+def test_contact_dispatcher_execution(profile, config, sample_remote_job):
+    from career_agent.contact_dispatcher import ContactDispatcher
+    from career_agent.fit_scorer import FitScorer
+    from career_agent.package_tailorer import PackageTailorer
+    from career_agent.outreach_finder import OutreachFinder
+
+    scorer = FitScorer(profile, config)
+    score_result = scorer.score_job(sample_remote_job)
+    tailorer = PackageTailorer(profile)
+    pkg = tailorer.build_tailored_package(sample_remote_job, score_result)
+    finder = OutreachFinder(profile)
+    draft = finder.create_outreach_draft(sample_remote_job)
+
+    dispatcher = ContactDispatcher(profile, auto_send=True)
+    record = dispatcher.dispatch_outreach(sample_remote_job, pkg, draft)
+
+    assert record.job_id == sample_remote_job.id
+    assert record.company == "ElevenLabs"
+    assert record.status in ["DISPATCHED", "SIMULATED_DISPATCH"]
+    assert dispatcher.is_already_contacted(sample_remote_job.id) is True
+
 
