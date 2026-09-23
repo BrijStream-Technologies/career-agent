@@ -55,8 +55,8 @@ class CareerAgentOrchestrator:
                 draft = self.outreach_finder.create_outreach_draft(job)
                 outreach_drafts[job.id] = draft
 
-                # Automated Identification & Contact Dispatch for High-Fit Roles
-                if score.recommendation == "AUTO_APPLY":
+                # Automated Identification & Contact Dispatch for High & Medium Fit Roles
+                if score.recommendation in ["AUTO_APPLY", "REVIEW"]:
                     dispatch_rec = self.dispatcher.dispatch_outreach(job, pkg, draft)
                     dispatches[job.id] = dispatch_rec
 
