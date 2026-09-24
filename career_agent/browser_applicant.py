@@ -343,9 +343,18 @@ class BrowserApplicant:
 
                 # 4. Fill standard input fields if present
                 fields_filled = 0
-                if self._fill_field(page, ["first_name", "first-name", "fname", "given-name", "given_name", "first"], self.profile.name.split()[0]):
+                first = getattr(self.profile, "first_name", "Sylvester")
+                middle = getattr(self.profile, "middle_name", "Floyd")
+                last = getattr(self.profile, "last_name", "Carter")
+                suffix = getattr(self.profile, "suffix", "IV")
+
+                if self._fill_field(page, ["first_name", "first-name", "fname", "given-name", "given_name", "first"], first):
                     fields_filled += 1
-                if self._fill_field(page, ["last_name", "last-name", "lname", "family-name", "family_name", "last"], " ".join(self.profile.name.split()[1:])):
+                if self._fill_field(page, ["middle_name", "middle-name", "mname", "middle_initial", "middle"], middle):
+                    fields_filled += 1
+                if self._fill_field(page, ["last_name", "last-name", "lname", "family-name", "family_name", "last", "surname"], last):
+                    fields_filled += 1
+                if self._fill_field(page, ["suffix", "title_suffix", "name_suffix"], suffix):
                     fields_filled += 1
                 if self._fill_field(page, ["name", "full_name", "full-name", "applicant_name"], self.profile.name):
                     fields_filled += 1

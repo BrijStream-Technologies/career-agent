@@ -9,11 +9,16 @@ from typing import List, Dict
 @dataclass
 class VerifiedCandidateProfile:
     name: str = "Sylvester Floyd Carter IV"
+    first_name: str = "Sylvester"
+    middle_name: str = "Floyd"
+    last_name: str = "Carter"
+    suffix: str = "IV"
     title: str = "AI Systems Architect & Executive Strategy Leader"
     education: str = "BA in Finance, Clark Atlanta University"
     email: str = "sylvesterfcarter@icloud.com"
     phone: str = "Available Upon Request"
     location: str = "Montgomery, TX (Targeting Remote US / Global)"
+    linkedin: str = "https://linkedin.com/in/sylvestercarter"
     
     # Verified Technical Metrics
     lines_of_code_built: int = 88000

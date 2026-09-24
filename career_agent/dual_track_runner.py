@@ -144,10 +144,15 @@ class DualTrackBatchRunner:
             app_res = self.direct_applicant.browser_applicant.apply_online(job, pkg, submit_live=submit_live)
             processed_count += 1
 
-            if app_res.get("screenshot_path"):
+            # Independent Adversarial Audit Cycle (Requires >= 95% score)
+            from career_agent.adversarial_application_auditor import AdversarialApplicationAuditor
+            auditor = AdversarialApplicationAuditor(target_score_threshold=95)
+            audit_report = auditor.audit_prefilled_application(job, pkg, app_res)
+
+            if audit_report.is_certified_95_plus and app_res.get("screenshot_path"):
                 prefilled_count += 1
                 screenshots.append(app_res["screenshot_path"])
-                logger.info(f"[{processed_count}/{limit}] Pre-filled site application for {ent.company_name}. Screenshot: {app_res['screenshot_path']}")
+                logger.info(f"[{processed_count}/{limit}] CERTIFIED (Audit Score {audit_report.audit_score}% >= 95%) pre-filled application for {ent.company_name}. Screenshot: {app_res['screenshot_path']}")
                 
                 # Record in database
                 opp = StrategicOpportunity(
@@ -157,10 +162,12 @@ class DualTrackBatchRunner:
                     role_title=job.title,
                     source_type="DIRECT_SITE",
                     url=careers_url,
-                    status=app_res["status"],
+                    status="AUDIT_CERTIFIED_PREVIEW_READY",
                     screenshot_path=app_res["screenshot_path"]
                 )
                 self.db.upsert_opportunity(opp)
+            else:
+                logger.warning(f"[{processed_count}/{limit}] REJECTED by Adversarial Auditor for {ent.company_name} (Score: {audit_report.audit_score}% < 95%): {audit_report.feedback}")
 
         return {
             "track": "Track B (Direct Company Site Applications)",
