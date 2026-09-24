@@ -103,6 +103,11 @@ class AdversarialApplicationAuditor:
             compliance_score -= 25
             feedback.append(f"Role Level Strategy Violation: Target title '{job.title}' contains blacklisted tier ({[fl for fl in FORBIDDEN_LEVELS if fl in title_lower]}). Sylvester targets Executive Architecture & Strategy Lead positions only.")
 
+        missed_qs = app_result.get("missed_questions", [])
+        if len(missed_qs) > 0:
+            compliance_score -= 15
+            feedback.append(f"Unanswered Form Question Audit Failure: Missed {len(missed_qs)} non-identity form question(s): {[m.get('label', 'Question') for m in missed_qs[:3]]}")
+
         if status not in ["PREFILLED_PREVIEW_READY", "PREFILLED_NEEDS_SUBMIT_CLICK", "SUBMITTED_ONLINE"]:
             compliance_score -= 20
             feedback.append(f"Application status '{status}' indicates incomplete form completion: {details}")

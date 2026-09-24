@@ -160,9 +160,73 @@ class BrowserApplicant:
                 "of executive entertainment/fintech operations with full-stack agent orchestration."
             )
 
+    def audit_unanswered_form_questions(self, page: Page) -> List[Dict[str, str]]:
+        """
+        DOM & ARIA Form Reconciliation Pass: Checks if any visible non-identity input field or required element was missed.
+        Returns a list of missed questions with their DOM attributes and labels.
+        """
+        missed = []
+        try:
+            # 1. HTML5 Required Field Check via JavaScript Evaluation
+            unfilled_required = page.evaluate("""() => {
+                const inputs = Array.from(document.querySelectorAll('input, textarea, select'));
+                return inputs
+                    .filter(el => el.offsetParent !== null && (el.required || el.getAttribute('aria-required') === 'true') && !el.value)
+                    .map(el => {
+                        const id = el.id || '';
+                        let labelText = '';
+                        if (id) {
+                            const lbl = document.querySelector(`label[for='${id}']`);
+                            if (lbl) labelText = lbl.innerText.trim();
+                        }
+                        return {
+                            id: id,
+                            name: el.getAttribute('name') || '',
+                            placeholder: el.getAttribute('placeholder') || '',
+                            label: labelText || el.getAttribute('aria-label') || el.getAttribute('name') || 'Required Question'
+                        };
+                    });
+            }""")
+            for item in unfilled_required:
+                missed.append(item)
+
+            # 2. Non-Identity Textarea & Text Input Audit
+            all_text_inputs = page.query_selector_all("textarea, input[type='text']")
+            for el in all_text_inputs:
+                if not el.is_visible():
+                    continue
+                attr_text = (
+                    (el.get_attribute("name") or "") + " " +
+                    (el.get_attribute("id") or "") + " " +
+                    (el.get_attribute("placeholder") or "")
+                ).lower()
+                # Skip standard identity fields
+                if any(k in attr_text for k in ["first", "last", "email", "phone", "city", "address", "zip", "location"]):
+                    continue
+                
+                val = (el.input_value() or "").strip()
+                if not val:
+                    label_text = attr_text
+                    id_attr = el.get_attribute("id")
+                    if id_attr:
+                        lbl = page.query_selector(f"label[for='{id_attr}']")
+                        if lbl:
+                            label_text = lbl.inner_text().strip()
+                    missed.append({
+                        "id": id_attr or "",
+                        "name": el.get_attribute("name") or "",
+                        "placeholder": el.get_attribute("placeholder") or "",
+                        "label": label_text
+                    })
+        except Exception as err:
+            logger.warning(f"Error auditing unanswered form questions: {err}")
+
+        return missed
+
     def answer_custom_open_ended_questions(self, page: Page, job: JobListing) -> List[Dict[str, str]]:
         """
         Scrapes all custom open-ended form questions on the page and fills them with authentic LLM-profile responses.
+        Also runs missing question reconciliation pass.
         """
         answered_questions = []
         textareas = page.query_selector_all("textarea, input[type='text']")
@@ -380,7 +444,13 @@ class BrowserApplicant:
                 custom_qa = self.answer_custom_open_ended_questions(page, job)
                 result["custom_questions_answered"] = custom_qa
 
-                # 8. Strict verification of live candidate form inputs presence
+                # 8. Unanswered Form Question Audit Reconciliation Pass
+                missed_questions = self.audit_unanswered_form_questions(page)
+                result["missed_questions"] = missed_questions
+                if missed_questions:
+                    logger.warning(f"Unanswered form questions detected ({len(missed_questions)}): {[m.get('label') for m in missed_questions]}")
+
+                # 9. Strict verification of live candidate form inputs presence
                 visible_inputs = [el for el in page.query_selector_all("input, textarea, select") if el.is_visible()]
                 candidate_form_inputs = []
                 for el in visible_inputs:
