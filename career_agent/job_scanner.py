@@ -105,8 +105,13 @@ class JobScanner:
             if listing.estimated_tc < self.config.min_total_compensation:
                 return False
 
-        # 5. Title relevance filter
+        # 5. Blacklisted role titles / levels (Fellowships, Internships, Junior, Entry Level, Contractors, Trainees)
+        FORBIDDEN_LEVELS = ["fellow", "fellowship", "intern", "internship", "junior", "associate", "entry level", "contractor", "trainee", "student"]
         title_lower = listing.title.lower()
+        if any(fl in title_lower for fl in FORBIDDEN_LEVELS):
+            return False
+
+        # 6. Title relevance filter
         title_matched = any(target.lower() in title_lower or any(word in title_lower for word in target.lower().split()) for target in self.config.target_titles)
         if not title_matched:
             return False

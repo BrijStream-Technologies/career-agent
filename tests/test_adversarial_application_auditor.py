@@ -71,3 +71,44 @@ def test_adversarial_application_auditor_certification(profile, job, tmp_path):
     assert report.screenshot_dom_score == 25
     assert report.audit_score == 100
     assert report.is_certified_95_plus is True
+
+def test_adversarial_application_auditor_fellowship_rejection(profile, tmp_path):
+    fellowship_job = JobListing(
+        id="anthropic_fellowship",
+        title="Anthropic Fellows Program, AI Safety",
+        company="Anthropic",
+        location="Remote - US",
+        is_remote=True,
+        base_salary_min=100000,
+        base_salary_max=150000,
+        estimated_tc=150000,
+        posting_date=datetime.now(),
+        description="Fellowship program for junior researchers.",
+        source_url="https://job-boards.greenhouse.io/anthropic/jobs/5183044008"
+    )
+    tailorer = PackageTailorer(profile)
+    scorer = FitScorer(profile, JobSearchConfig())
+    score_res = scorer.score_job(fellowship_job)
+    pkg = tailorer.build_tailored_package(fellowship_job, score_res)
+
+    screenshot_file = tmp_path / "test_screenshot.png"
+    screenshot_file.write_bytes(b"PNG_FAKE_IMAGE_DATA_" * 100)
+
+    mock_app_res = {
+        "job_id": fellowship_job.id,
+        "company": fellowship_job.company,
+        "url": fellowship_job.source_url,
+        "status": "PREFILLED_PREVIEW_READY",
+        "screenshot_path": str(screenshot_file),
+        "custom_questions_answered": [
+            {"question": "Q1", "answer": "88,000 LOC, 455/456 tests, Patent PMG-2025-001, Brij Brands, Sanctuary Group"}
+        ],
+        "details": "Pre-filled."
+    }
+
+    auditor = AdversarialApplicationAuditor(target_score_threshold=95)
+    report = auditor.audit_prefilled_application(fellowship_job, pkg, mock_app_res)
+
+    assert report.is_certified_95_plus is False
+    assert report.audit_score < 95
+    assert any("Role Level Strategy Violation" in f for f in report.feedback)

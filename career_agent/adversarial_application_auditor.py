@@ -90,11 +90,18 @@ class AdversarialApplicationAuditor:
         persona_score = max(0, persona_score)
 
         # -------------------------------------------------------------
-        # Pillar 3: Form Pre-Fill & Compliance Coverage (Max 25 pts)
+        # Pillar 3: Form Pre-Fill & Role Strategy Level Compliance (Max 25 pts)
         # -------------------------------------------------------------
         compliance_score = 25
         status = app_result.get("status", "")
         details = app_result.get("details", "")
+
+        # Reject Fellowships, Internships, Junior/Associate roles
+        FORBIDDEN_LEVELS = ["fellow", "fellowship", "intern", "internship", "junior", "associate", "entry level", "contractor", "trainee", "student"]
+        title_lower = job.title.lower()
+        if any(fl in title_lower for fl in FORBIDDEN_LEVELS):
+            compliance_score -= 25
+            feedback.append(f"Role Level Strategy Violation: Target title '{job.title}' contains blacklisted tier ({[fl for fl in FORBIDDEN_LEVELS if fl in title_lower]}). Sylvester targets Executive Architecture & Strategy Lead positions only.")
 
         if status not in ["PREFILLED_PREVIEW_READY", "PREFILLED_NEEDS_SUBMIT_CLICK", "SUBMITTED_ONLINE"]:
             compliance_score -= 20

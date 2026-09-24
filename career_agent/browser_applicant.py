@@ -356,7 +356,7 @@ class BrowserApplicant:
                     fields_filled += 1
                 if self._fill_field(page, ["suffix", "title_suffix", "name_suffix"], suffix):
                     fields_filled += 1
-                if self._fill_field(page, ["name", "full_name", "full-name", "applicant_name"], self.profile.name):
+                if self._fill_field(page, ["name", "full_name", "full-name", "applicant_name"], self.profile.name, is_full_name=True):
                     fields_filled += 1
                 if self._fill_field(page, ["email", "email_address", "email-address"], self.profile.email):
                     fields_filled += 1
@@ -424,7 +424,7 @@ class BrowserApplicant:
 
         return result
 
-    def _fill_field(self, page: Page, selector_names: list, value: str) -> bool:
+    def _fill_field(self, page: Page, selector_names: list, value: str, is_full_name: bool = False) -> bool:
         for name in selector_names:
             selectors = [
                 f"input[name*='{name}' i]",
@@ -433,8 +433,18 @@ class BrowserApplicant:
             ]
             for sel in selectors:
                 try:
-                    el = page.query_selector(sel)
-                    if el and el.is_visible():
+                    elements = page.query_selector_all(sel)
+                    for el in elements:
+                        if not el or not el.is_visible():
+                            continue
+                        attr_text = (
+                            (el.get_attribute("name") or "") + " " +
+                            (el.get_attribute("id") or "") + " " +
+                            (el.get_attribute("placeholder") or "")
+                        ).lower()
+                        # Never fill full name string into dedicated first/last/middle name fields!
+                        if is_full_name and any(k in attr_text for k in ["first", "last", "middle", "fname", "lname", "mname", "given", "family", "surname"]):
+                            continue
                         el.fill(value)
                         return True
                 except Exception:
