@@ -72,10 +72,10 @@ class AdversarialEvaluator:
 
         # Fix Strategic Resonance
         if company_name.lower() not in refined_brief.lower():
-            refined_brief = f"# MACHINE ECONOMY STRATEGIC TRANSFORMATION ROADMAP FOR {company_name.upper()}\n" + refined_brief
+            refined_brief = f"# C-SUITE EXECUTIVE SYSTEM STEERING ALIGNMENT BRIEF FOR {company_name.upper()}\n" + refined_brief
 
-        if "machine economy" not in refined_brief.lower():
-            refined_brief += "\n\n## 5. MACHINE ECONOMY PERSPECTIVE\nStrategic transformation leadership designed specifically for the Machine Economy."
+        if "system steering alignment brief" not in refined_brief.lower() and "machine economy" not in refined_brief.lower():
+            refined_brief += "\n\n## 5. EXECUTIVE SYSTEM STEERING ALIGNMENT\nExecutive system steering leadership designed specifically for scaling enterprise platforms in the Machine Economy."
 
         # Fix Empirical Proof
         if "88,000" not in refined_brief:
@@ -87,12 +87,18 @@ class AdversarialEvaluator:
         if "brij brands" not in refined_brief.lower():
             refined_brief += "\n- **Executive Track Record:** Executive Strategic Advisor @ Brij Brands (Park Bom), Senior Director @ Music World (Destiny's Child/Beyoncé), Founder/CEO @ Yysman Inc (Mary Mary)."
 
-        # Fix Steering Moat
+        if "solo" not in refined_brief.lower() and "solo" not in refined_cover.lower():
+            refined_brief += "\n- **Solo Achievement Receipt:** These telemetry and patent receipts represent modest empirical proof of what I have accomplished solo as a force multiplier."
+
+        # Fix Steering Moat & Enterprise Stage Ambition
         if "system steering" not in refined_brief.lower():
             refined_brief += "\n\n### SYSTEM STEERING MOAT\nOperates as a **Chief Agentic Steering Officer** directing autonomous agentic teams with 10x output velocity and 100% test integrity."
 
         if "10x" not in refined_brief:
             refined_brief += " Achieves 10x velocity with 100% test pass integrity."
+
+        if "larger enterprise stage" not in refined_brief.lower() and "larger enterprise stage" not in refined_cover.lower():
+            refined_brief += f"\n- **Enterprise Ambition:** Seeking the opportunity to bring Master-Level System Steering to a larger enterprise stage at {company_name}."
 
         # Clean any forbidden cliches
         forbidden_cliches = ["delve", "testament", "visionary synergy", "passionate developer", "thrilled to apply"]

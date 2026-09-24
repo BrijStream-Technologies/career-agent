@@ -118,7 +118,7 @@ class CareerAgentOrchestrator:
             digest_lines.append(f"### {ent_data['company_name']} (Agentic Intensity Score: {ent_data['agentic_score']}%)")
             digest_lines.append(f"- **Sector:** {ent_data['sector']}")
             digest_lines.append(f"- **Funding Telemetry:** {ent_data['funding_telemetry']}")
-            digest_lines.append(f"- **Strategic Roadmap:** {', '.join(ent_data['strategic_roadmap'][:2])}")
+            digest_lines.append(f"- **System Steering Focus:** {', '.join(ent_data['strategic_roadmap'][:2])}")
             digest_lines.append("")
 
         return "\n".join(digest_lines)

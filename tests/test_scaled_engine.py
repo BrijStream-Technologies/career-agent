@@ -11,14 +11,16 @@ from career_agent.agent_orchestrator import CareerAgentOrchestrator
 
 def test_market_scoring_model():
     model = MarketScoringModel()
-    brief = """# MACHINE ECONOMY STRATEGIC TRANSFORMATION ROADMAP FOR ANTHROPIC
+    brief = """# C-SUITE EXECUTIVE SYSTEM STEERING ALIGNMENT BRIEF FOR ANTHROPIC
 Operates as a **Chief Agentic Steering Officer** directing autonomous agentic teams with 10x output velocity and 100% test integrity.
 ### VERIFIED TELEMETRY
 - **88,000+ LOC Polyglot Receipts:** Production microservices across Go, Rust, C++, Python, TS (455/456 unit tests passing).
 - **Patent PMG-2025-001:** Autonomous Media Synchronization.
+- **Solo Execution Receipt:** These receipts represent modest empirical proof of what I have accomplished solo as a force multiplier.
 - **Executive Track Record:** Executive Strategic Advisor @ Brij Brands (Park Bom), Senior Director @ Music World (Destiny's Child/Beyoncé), Founder/CEO @ Yysman Inc.
+- **Enterprise Ambition:** Seeking the opportunity to bring Master-Level System Steering to a larger enterprise stage at Anthropic.
 """
-    cover = "Dear Dario Amodei, I have prepared a Machine Economy Strategic Transformation Roadmap for Anthropic."
+    cover = "Dear Dario Amodei, I am seeking the opportunity to bring my system steering capabilities to a larger enterprise stage at Anthropic, with solo receipts of 88,000 LOC."
 
     eval_res = model.evaluate_brief_strength("Anthropic", "Dario Amodei", brief, cover)
     assert eval_res.total_score >= 95

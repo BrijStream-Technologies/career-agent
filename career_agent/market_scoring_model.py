@@ -55,9 +55,9 @@ class MarketScoringModel:
         if company_name.lower() not in brief_lower:
             res_score -= 10
             critique.append("Missing explicit enterprise name customization.")
-        if "machine economy" not in brief_lower and "strategic transformation" not in brief_lower:
+        if "system steering alignment brief" not in brief_lower and "executive system steering" not in brief_lower and "machine economy" not in brief_lower:
             res_score -= 5
-            critique.append("Lacks high-level Machine Economy strategic framing.")
+            critique.append("Lacks high-level C-Suite Executive System Steering framing.")
 
         # Pillar 2: Empirical Proof Integrity (Max 25)
         if "88,000" not in brief_lower and "88k" not in brief_lower:
@@ -69,14 +69,20 @@ class MarketScoringModel:
         if "brij brands" not in brief_lower and "music world" not in brief_lower:
             proof_score -= 5
             critique.append("Missing verified executive track record (Brij Brands / Music World).")
+        if "solo" not in brief_lower and "independently" not in brief_lower and "alone" not in brief_lower and "solo" not in cover_lower:
+            proof_score -= 5
+            critique.append("Missing explicit framing of 88k LOC & patents as solo baseline proof.")
 
-        # Pillar 3: System Steering Moat Differentiation (Max 25)
+        # Pillar 3: Steering Moat & Enterprise Stage Ambition (Max 25)
         if "system steering" not in brief_lower and "steering officer" not in brief_lower:
             moat_score -= 10
             critique.append("Fails to emphasize System Steering Officer persona over raw coding.")
         if "10x" not in brief_lower and "100% test" not in brief_lower:
             moat_score -= 5
             critique.append("Lacks 10x output velocity & 100% test integrity mandate.")
+        if "larger enterprise stage" not in brief_lower and "bigger stage" not in brief_lower and "larger enterprise stage" not in cover_lower:
+            moat_score -= 5
+            critique.append("Lacks explicit positioning of seeking a larger enterprise stage.")
 
         # Pillar 4: Anti-Fluff Tone & Authority (Max 25)
         forbidden_cliches = ["delve", "testament", "visionary synergy", "passionate developer", "thrilled to apply"]
