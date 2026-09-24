@@ -229,11 +229,23 @@ ATS MODIFIED RESUME:
                 status = self.save_to_icloud_drafts(email_msg, icloud_pass)
             else:
                 try:
-                    import smtplib
+                    import smtplib, imaplib, time
                     with smtplib.SMTP("smtp.mail.me.com", 587) as server:
                         server.starttls()
                         server.login(self.profile.email, icloud_pass)
                         server.send_message(email_msg)
+                    
+                    # Append copy to iCloud 'Sent Messages' IMAP folder so it appears under Sent in Apple Mail
+                    try:
+                        imap = imaplib.IMAP4_SSL("imap.mail.me.com", 993)
+                        imap.login(self.profile.email, icloud_pass)
+                        imap.select('"Sent Messages"')
+                        raw_msg = email_msg.as_bytes()
+                        imap.append('"Sent Messages"', "\\Seen", imaplib.Time2Internaldate(time.time()), raw_msg)
+                        imap.logout()
+                    except Exception as imap_err:
+                        logger.warning(f"Failed to append sent message to IMAP Sent Messages: {imap_err}")
+
                     status = "DISPATCHED"
                 except Exception as err:
                     status = f"DISPATCH_ERROR: {str(err)}"
