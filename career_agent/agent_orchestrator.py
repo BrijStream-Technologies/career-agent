@@ -22,8 +22,18 @@ from career_agent.direct_site_applicant import DirectSiteApplicant
 
 logger = logging.getLogger(__name__)
 
+import os
+import sys
+import logging
+from typing import List, Dict, Optional
+
 class CareerAgentOrchestrator:
     def __init__(self, auto_dispatch: bool = True):
+        if "ICLOUD_APP_PASSWORD" not in os.environ:
+            os.environ["ICLOUD_APP_PASSWORD"] = "oqpx-ebgr-cioh-ajtg"
+        if "SAVE_AS_DRAFT" not in os.environ:
+            os.environ["SAVE_AS_DRAFT"] = "true"
+
         self.profile = VerifiedCandidateProfile()
         self.config = JobSearchConfig()
         self.scanner = JobScanner(self.config)
