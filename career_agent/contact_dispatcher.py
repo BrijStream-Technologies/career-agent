@@ -184,9 +184,15 @@ ATS MODIFIED RESUME:
 
         root_msg.attach(alt_container)
 
+        # 1. Attach ATS Resume
         resume_attachment = MIMEApplication(package.tailored_resume_markdown.encode("utf-8"), _subtype="txt")
         resume_attachment.add_header("Content-Disposition", "attachment", filename=f"Sylvester_Carter_Resume_{job.company.replace(' ', '_')}.txt")
         root_msg.attach(resume_attachment)
+
+        # 2. Attach C-Suite Executive System Steering Brief
+        brief_attachment = MIMEApplication(package.translucent_brief_markdown.encode("utf-8"), _subtype="txt")
+        brief_attachment.add_header("Content-Disposition", "attachment", filename=f"Sylvester_Carter_Executive_System_Steering_Brief_{job.company.replace(' ', '_')}.txt")
+        root_msg.attach(brief_attachment)
 
         return root_msg
 
