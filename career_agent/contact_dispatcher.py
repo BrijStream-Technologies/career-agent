@@ -90,7 +90,7 @@ ATS MODIFIED RESUME:
 """
         alt_container.attach(MIMEText(plain_text, "plain", "utf-8"))
 
-        # 2. Rich Executive HTML Body (Highlighting 100-Point Score & Dual Summaries)
+        # 2. Rich Executive HTML Body (Highlighting System Steering & Solo Receipts)
         html_content = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -120,16 +120,17 @@ ATS MODIFIED RESUME:
 </head>
 <body>
   <div class="container">
-    <div class="header">Executive Candidate Alignment Brief</div>
+    <div class="header">C-Suite Executive System Steering Alignment Brief</div>
     <div class="subtitle">{job.title} at {job.company} • Candidate: Sylvester Floyd Carter IV (Montgomery, TX)</div>
 
     <!-- PRIMARY MOAT: PROMPTING & SYSTEM STEERING PROFILE -->
     <div class="pillar-box pillar-purple" style="margin-top: 16px;">
-      <div class="pillar-title">👑 PRIMARY COMPETITIVE MOAT: PROMPTING & SYSTEM STEERING PROFILE</div>
+      <div class="pillar-title">👑 PRIMARY COMPETITIVE MOAT: SYSTEM STEERING OFFICER</div>
       <ul style="margin: 0; padding-left: 18px; font-size: 13px;">
-        <li><strong>System Steering Officer Persona:</strong> High-level executive steering using outcome-driven directives, mandatory architectural constraints, and test criteria—bypassing manual syntax micromanagement.</li>
+        <li><strong>System Steering Officer Persona:</strong> Executive system steering using outcome-driven directives, mandatory architectural constraints, and test criteria—bypassing manual syntax micromanagement.</li>
         <li><strong>Ruthless Non-Pleasing Truth Mandates:</strong> Commands AI agents to eliminate sycophantic/pleasing biases ("this is an honest fact-based analysis"), enforcing empirical reality checks and log audits before code approval.</li>
-        <li><strong>Institutional Domain-to-Code Translation:</strong> Translates 20+ years of high-stakes entertainment operations (RIAA 12x Diamond, 32x & 4x Grammy rosters, statutory licensing, 70/10/20 splits) directly into prompt rules that ship production code.</li>
+        <li><strong>Solo Force-Multiplier Receipts:</strong> 88,000+ lines of polyglot microservices, 455/456 unit tests, and Patent PMG-2025-001 represent modest empirical baseline proof of what Sylvester accomplished solo via AI agent steering.</li>
+        <li><strong>Larger Enterprise Stage Ambition:</strong> Bringing Master-Level System Steering, vision, and 25+ years of operational P&L background (Music World Sanctuary Group / Destiny's Child, Brij Brands / Park Bom) to direct enterprise agentic teams on a much larger stage.</li>
       </ul>
     </div>
 
@@ -194,9 +195,11 @@ ATS MODIFIED RESUME:
         job: JobListing,
         package: ApplicationPackage,
         outreach_draft: ExecutiveOutreachDraft,
-        recipient_email: Optional[str] = None
+        recipient_email: Optional[str] = None,
+        force_update: bool = False
     ) -> DispatchRecord:
-        if self.is_already_contacted(job.id):
+        force_refresh = force_update or os.environ.get("FORCE_REFRESH_DRAFTS", "false").lower() == "true"
+        if self.is_already_contacted(job.id) and not force_refresh:
             record_dict = self.ledger[job.id]
             record_dict.setdefault("recipient_name", "Hiring Executive")
             record_dict.setdefault("recipient_title", "VP / Head of Department")

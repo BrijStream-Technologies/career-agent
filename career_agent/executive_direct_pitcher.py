@@ -175,7 +175,7 @@ Montgomery, TX | sylvesterfcarter@icloud.com | BA Finance, Clark Atlanta Univers
         )
 
         # Append Rich HTML Executive Package directly to Apple Mail Drafts
-        dispatch_rec = self.dispatcher.dispatch_outreach(job_mock, pkg, outreach_draft, recipient_email=exec_email)
+        dispatch_rec = self.dispatcher.dispatch_outreach(job_mock, pkg, outreach_draft, recipient_email=exec_email, force_update=True)
 
         # Record in Strategic Database
         opp = StrategicOpportunity(
