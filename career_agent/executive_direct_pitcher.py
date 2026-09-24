@@ -1,7 +1,8 @@
 """
 Executive Direct Pitcher module for Sylvester's Autonomous Career Agent (Track A).
-Generates unsolicited executive direct alignment packages for decision-makers at high-spending Agentic AI enterprises,
-validates direct email deliverability via DNS MX records, and appends rich HTML briefs to Apple Mail Drafts.
+Generates C-Suite Machine Economy Strategic Transformation Roadmaps for decision-makers (CEOs, CTOs),
+positioning Sylvester as Chief Agentic Steering Officer / Executive Strategic Director.
+Validates direct email deliverability via DNS MX records and appends rich HTML briefs to Apple Mail Drafts.
 """
 
 import os
@@ -37,7 +38,7 @@ class ExecutiveDirectPitcher:
         tech_gaps: list
     ) -> Dict:
         """
-        Executes Track A: Generates bespoke Translucent Executive Alignment Brief,
+        Executes Track A: Generates C-Suite Machine Economy Strategic Transformation Roadmap,
         runs DNS MX deliverability validation, and appends rich HTML package to Apple Mail Drafts.
         """
         result = {
@@ -66,76 +67,87 @@ class ExecutiveDirectPitcher:
             result["details"] = f"Executive email {exec_email} failed DNS MX deliverability validation."
             return result
 
-        # 2. Build Unsolicited Executive Direct Brief (Value-First Strategic Proposal)
+        # 2. Build Machine Economy Strategic Transformation Roadmap for C-Suite
         job_mock = JobListing(
             id=f"pitch_{enterprise_id}",
-            title=f"AI Systems Architect & Executive Strategy Leader",
+            title=f"Chief Agentic Steering Officer / Executive Strategic Director",
             company=company_name,
-            location="Remote / Executive Briefing",
+            location="Remote / Executive Strategic Direction",
             is_remote=True,
-            base_salary_min=250000,
-            base_salary_max=350000,
-            estimated_tc=450000,
+            base_salary_min=300000,
+            base_salary_max=450000,
+            estimated_tc=600000,
             posting_date=datetime.now(),
-            description=f"Strategic architecture leadership for {company_name}, addressing {', '.join(tech_gaps)}.",
+            description=f"Executive strategic steering and agentic team direction for {company_name} in the Machine Economy.",
             source_url=f"https://{domain}"
         )
 
-        gaps_str = "\n".join([f"- **{gap}**" for gap in tech_gaps])
-        brief_md = f"""# EXECUTIVE STRATEGIC BRIEF: AI ARCHITECTURE & SYSTEM STEERING
+        roadmap_items = "\n".join([f"{i+1}. **{item}**" for i, item in enumerate(tech_gaps)])
+
+        brief_md = f"""# MACHINE ECONOMY STRATEGIC TRANSFORMATION ROADMAP
 **Target Enterprise:** {company_name}  
 **Addressed To:** {exec_name} ({exec_title})  
-**Author:** Sylvester Floyd Carter IV (AI Systems Architect & Executive Strategy Leader)  
+**Executive Author:** Sylvester Floyd Carter IV (Chief Agentic Steering Officer & Executive Strategic Director)  
 
 ---
 
-## 1. EXECUTIVE SYNOPSIS & SYSTEM STEERING MOAT
-{company_name} is scaling state-of-the-art Agentic AI infrastructure. However, scaling enterprise agent workflows requires explicit **System Steering, Proxy Metering, and Rights Governance** to control compute costs and enforce zero-hallucination execution.
+## 1. THE MACHINE ECONOMY INFLECTION POINT & SYSTEM STEERING MOAT
+As raw LLM compute becomes a global commodity, the competitive moat for {company_name} is **neither access to models nor sheer developer headcount**. 
 
-I operate as a **System Steering Officer**—bridging 20+ years of multi-million dollar commercial entertainment & fintech P&L leadership directly into 88,000+ lines of production polyglot microservices code.
+The fundamental bottleneck is **System Steering & Strategic Direction**:
+- Without Master-Level System Steering, agentic teams produce unverified "AI slop", uncalibrated loops, and runaway compute spend.
+- With Master-Level System Steering, an autonomous agentic team operates at **10x execution velocity with 100% test integrity and zero-fluff truthfulness**.
 
-### Core Architectural Value Offered to {company_name}:
-{gaps_str}
+I operate as a **Chief Agentic Steering Officer**—bridging 25+ years of multi-million dollar commercial entertainment and fintech P&L leadership directly into 88,000+ lines of production polyglot microservices code across Go (Golang), Rust, C/C++, Python, TypeScript, SQL, and Shell.
 
 ---
 
-## 2. VERIFIED CANDIDATE ATTESTATIONS & PROOF POINTS
-- **88,000+ LOC Polyglot Code Telemetry:** Production microservices engineered across **Go (Golang)**, **Rust**, **C/C++**, **Python**, **TypeScript/Node.js**, **SQL**, and **Shell** (455/456 unit test suite pass rate).
+## 2. STRATEGIC TRANSFORMATION ROADMAP FOR {company_name.upper()}
+Based on data-driven pattern recognition and cross-industry synthesis across the Content Streaming and Machine Economies, here is the strategic roadmap for {company_name}:
+
+{roadmap_items}
+
+---
+
+## 3. EMPIRICAL PROOF & VERIFIABLE RECEIPTS
+- **88,000+ LOC Polyglot Telemetry:** Built, tested, and deployed production microservices across **Go**, **Rust**, **C/C++**, **Python**, **TypeScript/Node.js**, **SQL**, and **Shell** (455/456 unit test pass rate).
 - **Patent PMG-2025-001:** Autonomous Media Synchronization, Dynamic Audio Substitution, and Instant Split Payment Ledgers.
-- **Institutional Track Record:**
+- **Executive & Commercial Track Record:**
   - **Executive Strategic Advisor, Brij Brands:** Executive strategic advisor to Park Bom of 2NE1 (Billboard 200).
-  - **Senior Director of Operations, Music World Sanctuary Group:** Directed 4 core divisions for top Urban management enterprise (Destiny's Child/Beyoncé [32x Grammy Winner], Mary J. Blige, Earth Wind & Fire, Chaka Khan).
+  - **Senior Director of Operations, Music World / Sanctuary Group:** Managed 4 core divisions for top Urban management enterprise (Destiny's Child/Beyoncé [32x Grammy Winner], Mary J. Blige, Earth Wind & Fire, Chaka Khan).
   - **Founder & CEO, Yysman, Inc.:** Represented Mary Mary (4x Grammy Winners), Myron Butler, Ted & Sheri, and Platinum Producers.
 
 ---
 
-## 3. PROPOSED ENGAGEMENT & ARCHITECTURAL ROADMAP
-I welcome a direct executive conversation regarding how we can deploy these governance microservices and system steering frameworks at {company_name}.
+## 4. EXECUTIVE ENGAGEMENT PROPOSAL
+I welcome a direct conversation regarding how we can execute this Strategic Transformation Roadmap and lead {company_name} to dominate the Machine Economy.
 """
 
         cover_md = f"""Dear {exec_name},
 
-I am writing to share a concise Executive Strategic Brief on scaling multi-agent system steering, proxy metering, and audio/content governance at {company_name}.
+In the emerging Machine Economy, enterprise competitive advantage is no longer determined by access to raw LLM compute or sheer developer headcount—it is determined by **System Steering & Executive Direction**.
 
-Having directed 88,000+ lines of polyglot microservice builds alongside 20+ years managing top-tier P&L operations (Music World Sanctuary Group / Destiny's Child, Brij Brands / Park Bom), I specialize in helping high-growth AI enterprises control compute spend and enforce absolute system prompt truthfulness.
+Without Master-Level System Steering, agentic teams generate AI slop and uncalibrated compute spend. Directed by a System Steering Officer, autonomous teams execute at 10x velocity with 100% test pass integrity.
 
-Attached is the full Executive Brief detailing how we can address {', '.join(tech_gaps[:2])}.
+I have prepared a concise **Machine Economy Strategic Transformation Roadmap** for {company_name}, drawing on 88,000+ lines of polyglot telemetry and 25+ years of commercial P&L leadership (Music World Sanctuary Group / Destiny's Child, Brij Brands / Park Bom).
+
+The full Strategic Brief is attached for your review.
 
 Sincerely,
 Sylvester Floyd Carter IV
-AI Systems Architect & Executive Strategy Leader
+Chief Agentic Steering Officer & Executive Strategic Director
 sylvesterfcarter@icloud.com | Montgomery, TX
 """
 
         resume_md = f"""# SYLVESTER FLOYD CARTER IV
-**AI Systems Architect & Executive Strategy Leader**  
+**Chief Agentic Steering Officer & Executive Strategic Director**  
 Montgomery, TX | sylvesterfcarter@icloud.com | BA Finance, Clark Atlanta University  
 
 ---
 ## CORE COMPETENCIES & TECHNICAL TELEMETRY
-- **Languages & Frameworks:** Go (Golang), Rust, C/C++, Python, TypeScript, Node.js, SQL, Shell.
-- **Codebase Receipts:** 88,000+ LOC production microservices | 455/456 passing unit tests.
-- **Patents:** PMG-2025-001 (Autonomous Media Sync, Dynamic Audio Substitution, Split Ledgers).
+- **System Steering & Meta-Prompting:** Autonomous agentic team direction, multi-LLM proxy rate metering, zero-fluff truthfulness.
+- **Polyglot Codebase Receipts:** 88,000+ LOC production microservices across Go (Golang), Rust, C/C++, Python, TypeScript, SQL, Shell | 455/456 passing unit tests.
+- **Patents:** PMG-2025-001 (Autonomous Media Sync, Dynamic Audio Substitution, Instant Split Payment Ledgers).
 - **Executive Record:** Strategic Advisor @ Brij Brands (Park Bom), Senior Director @ Music World (Destiny's Child/Beyoncé), Founder/CEO @ Yysman Inc (Mary Mary).
 """
 
@@ -174,5 +186,5 @@ Montgomery, TX | sylvesterfcarter@icloud.com | BA Finance, Clark Atlanta Univers
         self.db.record_outreach(job_mock.id, enterprise_id, exec_email, dispatch_rec.subject, dispatch_rec.status)
 
         result["status"] = dispatch_rec.status
-        result["details"] = f"Executive pitch package for {exec_name} appended to Apple Mail Drafts (Status: {dispatch_rec.status})."
+        result["details"] = f"Executive brief for {exec_name} appended to Apple Mail Drafts (Status: {dispatch_rec.status})."
         return result

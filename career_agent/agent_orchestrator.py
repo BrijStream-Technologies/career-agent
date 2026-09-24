@@ -56,7 +56,7 @@ class CareerAgentOrchestrator:
                 company_name=ent_data["company_name"],
                 domain=ent_data["domain"],
                 agentic_score=ent_data["agentic_score"],
-                tech_stack_gaps=ent_data["tech_stack_gaps"],
+                tech_stack_gaps=ent_data.get("strategic_roadmap") or ent_data.get("tech_stack_gaps", []),
                 funding_telemetry=ent_data["funding_telemetry"],
                 sector=ent_data["sector"]
             )
