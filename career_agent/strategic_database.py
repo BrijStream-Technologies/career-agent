@@ -49,6 +49,18 @@ class StrategicOpportunity:
     screenshot_path: Optional[str] = None
     created_at: str = ""
 
+@dataclass
+class SylvesterBrainQuestion:
+    id: str
+    company_name: str
+    ats_platform: str          # "Greenhouse", "Lever", "Ashby", "Workday", "Direct"
+    question_text: str
+    intent_category: str       # "System Steering & Leadership", "Technical Architecture", "P&L Operations", "Compensation", "Motivation"
+    canonical_answer: str
+    audit_score: int            # 0-100 score from Adversarial Persona Auditor
+    is_certified: bool          # True if audit_score >= 95
+    created_at: str = ""
+
 class StrategicDatabase:
     def __init__(self, db_path: Path = DB_PATH):
         self.db_path = db_path
@@ -113,6 +125,20 @@ class StrategicDatabase:
                 status TEXT NOT NULL,
                 dispatch_timestamp TEXT NOT NULL,
                 FOREIGN KEY (enterprise_id) REFERENCES enterprises (id)
+            )
+            """)
+
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS sylvester_brain_questions (
+                id TEXT PRIMARY KEY,
+                company_name TEXT NOT NULL,
+                ats_platform TEXT NOT NULL,
+                question_text TEXT NOT NULL,
+                intent_category TEXT NOT NULL,
+                canonical_answer TEXT NOT NULL,
+                audit_score INTEGER NOT NULL,
+                is_certified BOOLEAN NOT NULL,
+                created_at TEXT NOT NULL
             )
             """)
 
@@ -219,6 +245,40 @@ class StrategicDatabase:
                     url=row["url"],
                     status=row["status"],
                     screenshot_path=row["screenshot_path"],
+                    created_at=row["created_at"]
+                ))
+            return results
+
+    def upsert_brain_question(self, bq: SylvesterBrainQuestion):
+        now = datetime.now().isoformat()
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+            INSERT INTO sylvester_brain_questions (id, company_name, ats_platform, question_text, intent_category, canonical_answer, audit_score, is_certified, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+                canonical_answer=excluded.canonical_answer,
+                audit_score=excluded.audit_score,
+                is_certified=excluded.is_certified
+            """, (bq.id, bq.company_name, bq.ats_platform, bq.question_text, bq.intent_category, bq.canonical_answer, bq.audit_score, bq.is_certified, bq.created_at or now))
+            conn.commit()
+
+    def get_certified_brain_questions(self) -> List[SylvesterBrainQuestion]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM sylvester_brain_questions WHERE is_certified = 1 ORDER BY audit_score DESC")
+            rows = cursor.fetchall()
+            results = []
+            for row in rows:
+                results.append(SylvesterBrainQuestion(
+                    id=row["id"],
+                    company_name=row["company_name"],
+                    ats_platform=row["ats_platform"],
+                    question_text=row["question_text"],
+                    intent_category=row["intent_category"],
+                    canonical_answer=row["canonical_answer"],
+                    audit_score=row["audit_score"],
+                    is_certified=bool(row["is_certified"]),
                     created_at=row["created_at"]
                 ))
             return results
