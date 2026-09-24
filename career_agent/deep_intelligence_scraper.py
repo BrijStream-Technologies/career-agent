@@ -23,12 +23,16 @@ class DeepIntelligenceScraper:
         Deep-scrapes company team, about, and research pages to extract real executive leaders and department heads.
         """
         contacts = []
+        clean_domain = domain.replace("www.", "")
         target_urls = [
-            f"https://{domain}/about",
-            f"https://{domain}/team",
-            f"https://{domain}/company",
-            f"https://{domain}/research",
-            f"https://{domain}/careers"
+            f"https://www.{clean_domain}/company",
+            f"https://www.{clean_domain}/about",
+            f"https://www.{clean_domain}/team",
+            f"https://www.{clean_domain}/research",
+            f"https://www.{clean_domain}/news",
+            f"https://www.{clean_domain}/careers",
+            f"https://{clean_domain}/about",
+            f"https://{clean_domain}/team"
         ]
 
         logger.info(f"Deep scraping leadership intelligence for {company_name} ({domain})...")
