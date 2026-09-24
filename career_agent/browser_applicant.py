@@ -203,6 +203,63 @@ class BrowserApplicant:
 
         return answered_questions
 
+    def step_to_active_form_if_needed(self, page: Page, company_name: str) -> bool:
+        """
+        If current page has no input fields (e.g., top-level careers landing page),
+        scrapes the page for active job listing links or ATS links (Greenhouse, Lever, Ashby, Workday)
+        and steps into the actual job posting form page.
+        """
+        try:
+            visible_inputs = [el for el in page.query_selector_all("input, textarea") if el.is_visible()]
+            if len(visible_inputs) > 0:
+                return True
+
+            logger.info(f"No input fields on landing page ({page.url}). Searching for direct ATS / job board links...")
+            links = page.query_selector_all("a")
+            candidate_urls = []
+            for link in links:
+                try:
+                    href = link.get_attribute("href") or ""
+                    if not href or href.startswith("#") or href.startswith("javascript:"):
+                        continue
+                    href_lower = href.lower()
+                    if any(ats in href_lower for ats in ["greenhouse.io", "lever.co", "ashbyhq.com", "myworkdayjobs.com", "workable.com", "smartrecruiters.com"]):
+                        candidate_urls.append(href)
+                    elif any(kw in href_lower for kw in ["/job/", "/jobs/", "/careers/jobs", "/position/", "/opening/", "gh_jid"]):
+                        if href.startswith("/"):
+                            from urllib.parse import urlparse
+                            parsed = urlparse(page.url)
+                            href = f"{parsed.scheme}://{parsed.netloc}{href}"
+                        candidate_urls.append(href)
+                except Exception:
+                    pass
+
+            for target_url in candidate_urls[:3]:
+                try:
+                    logger.info(f"Stepping through to job listing URL: {target_url}")
+                    page.goto(target_url, timeout=20000, wait_until="domcontentloaded")
+                    page.wait_for_timeout(2000)
+
+                    apply_btn = page.query_selector(
+                        "a:has-text('Apply'), button:has-text('Apply'), "
+                        "a:has-text('Apply Now'), button:has-text('Apply Now'), "
+                        "a:has-text('Apply for this job'), button:has-text('Apply for this job')"
+                    )
+                    if apply_btn and apply_btn.is_visible():
+                        apply_btn.click()
+                        page.wait_for_timeout(2000)
+
+                    new_inputs = [el for el in page.query_selector_all("input, textarea") if el.is_visible()]
+                    if len(new_inputs) > 0:
+                        logger.info(f"Successfully stepped through to form page with {len(new_inputs)} visible input fields!")
+                        return True
+                except Exception as err:
+                    logger.warning(f"Failed stepping through to {target_url}: {err}")
+        except Exception as e:
+            logger.warning(f"Error in step_to_active_form_if_needed: {e}")
+
+        return False
+
     def handle_dropdowns_and_compliance(self, page: Page):
         """
         Selects standard compliance options (US Work Authorization, Sponsorship, EEO) across ATS forms.
@@ -247,8 +304,8 @@ class BrowserApplicant:
 
     def apply_online(self, job: JobListing, package: ApplicationPackage, submit_live: bool = False) -> Dict:
         """
-        Navigates to the job's source_url, detects account requirements, completes registration/login if required,
-        populates Sylvester's profile & tailored package, answers custom questions, and optionally submits.
+        Navigates to the job's source_url, steps through landing pages to active job application forms,
+        populates Sylvester's profile & tailored package, answers custom questions, verifies input presence, and captures screenshots.
         """
         result = {
             "job_id": job.id,
@@ -269,10 +326,13 @@ class BrowserApplicant:
                 page.goto(job.source_url, timeout=30000, wait_until="domcontentloaded")
                 page.wait_for_timeout(2000)
 
-                # 1. Handle Account Creation / Registration if required (e.g., Workday/Taleo/iCIMS)
+                # 1. Step through landing page to active job form if needed
+                self.step_to_active_form_if_needed(page, job.company)
+
+                # 2. Handle Account Creation / Registration if required (e.g., Workday/Taleo/iCIMS)
                 self.handle_account_registration(page, job.company)
 
-                # 2. Look for "Apply" button if on a landing page
+                # 3. Look for "Apply" button if on a landing page
                 apply_btn = page.query_selector("a:has-text('Apply'), button:has-text('Apply'), a:has-text('Apply Now'), button:has-text('Apply Now')")
                 if apply_btn:
                     try:
@@ -281,46 +341,60 @@ class BrowserApplicant:
                     except Exception:
                         pass
 
-                # 3. Fill standard input fields if present
-                self._fill_field(page, ["first_name", "first-name", "fname", "given-name", "given_name", "first"], self.profile.name.split()[0])
-                self._fill_field(page, ["last_name", "last-name", "lname", "family-name", "family_name", "last"], " ".join(self.profile.name.split()[1:]))
-                self._fill_field(page, ["name", "full_name", "full-name", "applicant_name"], self.profile.name)
-                self._fill_field(page, ["email", "email_address", "email-address"], self.profile.email)
+                # 4. Fill standard input fields if present
+                fields_filled = 0
+                if self._fill_field(page, ["first_name", "first-name", "fname", "given-name", "given_name", "first"], self.profile.name.split()[0]):
+                    fields_filled += 1
+                if self._fill_field(page, ["last_name", "last-name", "lname", "family-name", "family_name", "last"], " ".join(self.profile.name.split()[1:])):
+                    fields_filled += 1
+                if self._fill_field(page, ["name", "full_name", "full-name", "applicant_name"], self.profile.name):
+                    fields_filled += 1
+                if self._fill_field(page, ["email", "email_address", "email-address"], self.profile.email):
+                    fields_filled += 1
                 phone_val = getattr(self.profile, "phone", "Available Upon Request")
-                self._fill_field(page, ["phone", "mobile", "telephone", "phone_number", "phone-number"], phone_val)
-                self._fill_field(page, ["location", "city", "address", "current_location"], self.profile.location)
+                if self._fill_field(page, ["phone", "mobile", "telephone", "phone_number", "phone-number"], phone_val):
+                    fields_filled += 1
+                if self._fill_field(page, ["location", "city", "address", "current_location"], self.profile.location):
+                    fields_filled += 1
                 if hasattr(self.profile, "linkedin"):
-                    self._fill_field(page, ["linkedin", "website", "portfolio", "url"], self.profile.linkedin)
+                    if self._fill_field(page, ["linkedin", "website", "portfolio", "url"], self.profile.linkedin):
+                        fields_filled += 1
 
-                # 4. Fill compliance & work authorization dropdowns
+                # 5. Fill compliance & work authorization dropdowns
                 self.handle_dropdowns_and_compliance(page)
 
-                # 5. Fill cover letter / notes / system steering brief
+                # 6. Fill cover letter / notes / system steering brief
                 cover_text = f"{package.translucent_brief_markdown}\n\n{package.cover_letter_markdown}"
                 self._fill_textarea(page, ["cover_letter", "cover-letter", "comments", "additional_info", "brief"], cover_text)
 
-                # 5. Profile-Driven LLM Custom Question Answering
+                # 7. Profile-Driven LLM Custom Question Answering
                 custom_qa = self.answer_custom_open_ended_questions(page, job)
                 result["custom_questions_answered"] = custom_qa
 
-                # 6. Save pre-submission screenshot
-                screenshot_file = self.screenshots_dir / f"{job.id}_application.png"
-                page.screenshot(path=str(screenshot_file), full_page=True)
-                result["screenshot_path"] = str(screenshot_file)
-
-                if submit_live:
-                    submit_button = page.query_selector("button[type='submit'], input[type='submit'], button:has-text('Submit Application')")
-                    if submit_button:
-                        submit_button.click()
-                        page.wait_for_timeout(3000)
-                        result["status"] = "SUBMITTED_ONLINE"
-                        result["details"] = "Application form submitted live via Chrome Playwright engine."
-                    else:
-                        result["status"] = "PREFILLED_NEEDS_SUBMIT_CLICK"
-                        result["details"] = "Form pre-filled cleanly. Submit button requires final click."
+                # 8. Strict verification of live form inputs presence
+                visible_inputs = [el for el in page.query_selector_all("input, textarea, select") if el.is_visible()]
+                if len(visible_inputs) == 0:
+                    result["status"] = "NO_LIVE_FORM_INPUTS_FOUND"
+                    result["details"] = f"Visited {page.url} but no live job application input fields were found on the page."
                 else:
-                    result["status"] = "PREFILLED_PREVIEW_READY"
-                    result["details"] = f"Form pre-filled and verified. Screenshot captured at {screenshot_file.name}."
+                    # Save pre-submission screenshot
+                    screenshot_file = self.screenshots_dir / f"{job.id}_application.png"
+                    page.screenshot(path=str(screenshot_file), full_page=True)
+                    result["screenshot_path"] = str(screenshot_file)
+
+                    if submit_live:
+                        submit_button = page.query_selector("button[type='submit'], input[type='submit'], button:has-text('Submit Application')")
+                        if submit_button:
+                            submit_button.click()
+                            page.wait_for_timeout(3000)
+                            result["status"] = "SUBMITTED_ONLINE"
+                            result["details"] = "Application form submitted live via Chrome Playwright engine."
+                        else:
+                            result["status"] = "PREFILLED_NEEDS_SUBMIT_CLICK"
+                            result["details"] = f"Form pre-filled cleanly with {len(visible_inputs)} visible inputs. Submit button requires final click."
+                    else:
+                        result["status"] = "PREFILLED_PREVIEW_READY"
+                        result["details"] = f"Form pre-filled and verified with {len(visible_inputs)} visible inputs. Screenshot captured at {screenshot_file.name}."
 
                 browser.close()
 
@@ -330,7 +404,7 @@ class BrowserApplicant:
 
         return result
 
-    def _fill_field(self, page: Page, selector_names: list, value: str):
+    def _fill_field(self, page: Page, selector_names: list, value: str) -> bool:
         for name in selector_names:
             selectors = [
                 f"input[name*='{name}' i]",
@@ -342,9 +416,10 @@ class BrowserApplicant:
                     el = page.query_selector(sel)
                     if el and el.is_visible():
                         el.fill(value)
-                        return
+                        return True
                 except Exception:
                     pass
+        return False
 
     def _fill_textarea(self, page: Page, selector_names: list, value: str):
         for name in selector_names:
