@@ -92,10 +92,10 @@ class AdversarialEvaluator:
 
         # Fix Steering Moat & Enterprise Stage Ambition
         if "system steering" not in refined_brief.lower():
-            refined_brief += "\n\n### SYSTEM STEERING MOAT\nOperates as a **Chief Agentic Steering Officer** directing autonomous agentic teams with 10x output velocity and 100% test integrity."
+            refined_brief += "\n\n### SYSTEM STEERING MOAT\nOperates as a **Chief Agentic Steering Officer** directing autonomous agentic workflows under strict 100% test integrity rules."
 
-        if "10x" not in refined_brief:
-            refined_brief += " Achieves 10x velocity with 100% test pass integrity."
+        if "test integrity" not in refined_brief.lower() and "455/456" not in refined_cover.lower():
+            refined_brief += " Directs AI agents under 100% test pass verification standards."
 
         if "larger enterprise stage" not in refined_brief.lower() and "larger enterprise stage" not in refined_cover.lower():
             refined_brief += f"\n- **Enterprise Ambition:** Seeking the opportunity to bring Master-Level System Steering to a larger enterprise stage at {company_name}."

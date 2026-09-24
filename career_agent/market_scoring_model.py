@@ -77,9 +77,9 @@ class MarketScoringModel:
         if "system steering" not in brief_lower and "steering officer" not in brief_lower:
             moat_score -= 10
             critique.append("Fails to emphasize System Steering Officer persona over raw coding.")
-        if "10x" not in brief_lower and "100% test" not in brief_lower:
+        if "test integrity" not in brief_lower and "100% test" not in brief_lower and "455/456" not in cover_lower:
             moat_score -= 5
-            critique.append("Lacks 10x output velocity & 100% test integrity mandate.")
+            critique.append("Lacks test integrity mandate or empirical unit test pass rate.")
         if "larger enterprise stage" not in brief_lower and "bigger stage" not in brief_lower and "larger enterprise stage" not in cover_lower:
             moat_score -= 5
             critique.append("Lacks explicit positioning of seeking a larger enterprise stage.")
