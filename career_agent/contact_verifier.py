@@ -24,7 +24,7 @@ class VerifiedContact:
     mx_records_found: List[str] = field(default_factory=list)
     confidence_score: int = 0  # 0-100%
 
-# Known Executive & Hiring Manager Directory for Key AI / Tech Companies
+# Known Executive & Hiring Manager Directory for Key AI / Tech / Media Companies
 EXECUTIVE_DIRECTORY = {
     "elevenlabs": [
         {"name": "Mati Staniszewski", "title": "Co-Founder & CEO", "email_pattern": "mati@elevenlabs.io"},
@@ -33,6 +33,49 @@ EXECUTIVE_DIRECTORY = {
     "anthropic": [
         {"name": "Dario Amodei", "title": "CEO & Co-Founder", "email_pattern": "dario@anthropic.com"},
         {"name": "Daniela Amodei", "title": "President & Co-Founder", "email_pattern": "daniela@anthropic.com"}
+    ],
+    "openai": [
+        {"name": "Sam Altman", "title": "CEO & Co-Founder", "email_pattern": "sam@openai.com"},
+        {"name": "Greg Brockman", "title": "President & Co-Founder", "email_pattern": "greg@openai.com"}
+    ],
+    "cognition": [
+        {"name": "Scott Wu", "title": "CEO & Co-Founder", "email_pattern": "scott@cognition.ai"}
+    ],
+    "cognitionai": [
+        {"name": "Scott Wu", "title": "CEO & Co-Founder", "email_pattern": "scott@cognition.ai"}
+    ],
+    "anysphere": [
+        {"name": "Michael Truell", "title": "CEO & Co-Founder", "email_pattern": "michael@cursor.com"}
+    ],
+    "cursor": [
+        {"name": "Michael Truell", "title": "CEO & Co-Founder", "email_pattern": "michael@cursor.com"}
+    ],
+    "stripe": [
+        {"name": "Patrick Collison", "title": "CEO & Co-Founder", "email_pattern": "patrick@stripe.com"}
+    ],
+    "circle": [
+        {"name": "Jeremy Allaire", "title": "CEO & Co-Founder", "email_pattern": "jeremy@circle.com"}
+    ],
+    "coinbase": [
+        {"name": "Brian Armstrong", "title": "CEO & Co-Founder", "email_pattern": "brian@coinbase.com"}
+    ],
+    "perplexity": [
+        {"name": "Aravind Srinivas", "title": "CEO & Co-Founder", "email_pattern": "aravind@perplexity.ai"}
+    ],
+    "cohere": [
+        {"name": "Aidan Gomez", "title": "CEO & Co-Founder", "email_pattern": "aidan@cohere.com"}
+    ],
+    "pinecone": [
+        {"name": "Edo Liberty", "title": "CEO & Founder", "email_pattern": "edo@pinecone.io"}
+    ],
+    "epicgames": [
+        {"name": "Tim Sweeney", "title": "CEO & Founder", "email_pattern": "tim@epicgames.com"}
+    ],
+    "unity": [
+        {"name": "Matt Bromberg", "title": "CEO, Unity Technologies", "email_pattern": "matt@unity.com"}
+    ],
+    "roblox": [
+        {"name": "David Baszucki", "title": "CEO & Founder", "email_pattern": "david@roblox.com"}
     ],
     "warnermusicgroup": [
         {"name": "Robert Kyncl", "title": "CEO, Warner Music Group", "email_pattern": "robert.kyncl@wmg.com"}
@@ -72,15 +115,26 @@ class ContactVerifier:
         """
         company_key = self.clean_domain(company)
         domain = fallback_domain or f"{company_key}.com"
-        if company_key == "elevenlabs":
-            domain = "elevenlabs.io"
-        elif company_key in ["warnermusicgroup", "wmg"]:
-            domain = "wmg.com"
+        
+        domain_map = {
+            "elevenlabs": "elevenlabs.io",
+            "warnermusicgroup": "wmg.com",
+            "wmg": "wmg.com",
+            "cognition": "cognition.ai",
+            "cognitionai": "cognition.ai",
+            "anysphere": "cursor.com",
+            "cursor": "cursor.com",
+            "perplexity": "perplexity.ai",
+            "pinecone": "pinecone.io"
+        }
+        if company_key in domain_map:
+            domain = domain_map[company_key]
 
         # 1. Check Executive Directory match
         if company_key in EXECUTIVE_DIRECTORY:
             exec_info = EXECUTIVE_DIRECTORY[company_key][0]
-            mx_records = self.verify_dns_mx_records(domain)
+            target_domain = exec_info["email_pattern"].split("@")[-1]
+            mx_records = self.verify_dns_mx_records(target_domain)
             if mx_records:
                 status = "VERIFIED_EXECUTIVE_DIRECT"
                 score = 98

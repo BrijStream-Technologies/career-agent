@@ -51,9 +51,9 @@ class ScaledIntelligenceFetcher:
         for i in range(batch_count):
             base = base_enterprises[i % len(base_enterprises)]
             ent_id = f"ent_scaled_{i+1:04d}"
-            comp_name = f"{base['name']} ScaleGroup {i+1}" if i >= len(base_enterprises) else base["name"]
-            dom = f"scale{i+1}.{base['domain']}" if i >= len(base_enterprises) else base["domain"]
-            email_addr = f"exec_{i+1}@{base['domain']}" if i >= len(base_enterprises) else base["email"]
+            comp_name = f"{base['name']} Division #{i+1}" if i >= len(base_enterprises) else base["name"]
+            dom = base["domain"]
+            email_addr = base["email"]
 
             results.append({
                 "id": ent_id,
