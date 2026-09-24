@@ -203,6 +203,48 @@ class BrowserApplicant:
 
         return answered_questions
 
+    def handle_dropdowns_and_compliance(self, page: Page):
+        """
+        Selects standard compliance options (US Work Authorization, Sponsorship, EEO) across ATS forms.
+        """
+        try:
+            selects = page.query_selector_all("select")
+            for sel in selects:
+                if not sel.is_visible():
+                    continue
+                name_attr = (sel.get_attribute("name") or "").lower()
+                id_attr = (sel.get_attribute("id") or "").lower()
+
+                # Work authorization
+                if any(k in name_attr or k in id_attr for k in ["auth", "work_auth", "legally", "authorized", "eligible"]):
+                    options = sel.query_selector_all("option")
+                    for opt in options:
+                        txt = (opt.inner_text() or "").lower()
+                        val = (opt.get_attribute("value") or "").lower()
+                        if "yes" in txt or "authorized" in txt or "yes" in val:
+                            sel.select_option(value=opt.get_attribute("value") or opt.inner_text())
+                            break
+                # Sponsorship
+                elif any(k in name_attr or k in id_attr for k in ["sponsor", "sponsorship", "visa"]):
+                    options = sel.query_selector_all("option")
+                    for opt in options:
+                        txt = (opt.inner_text() or "").lower()
+                        val = (opt.get_attribute("value") or "").lower()
+                        if "no" in txt or "don't" in txt or "do not" in txt or "no" in val:
+                            sel.select_option(value=opt.get_attribute("value") or opt.inner_text())
+                            break
+                # Veteran / Disability / EEO
+                elif any(k in name_attr or k in id_attr for k in ["veteran", "disability", "eeo", "gender", "race"]):
+                    options = sel.query_selector_all("option")
+                    for opt in options:
+                        txt = (opt.inner_text() or "").lower()
+                        val = (opt.get_attribute("value") or "").lower()
+                        if "decline" in txt or "don't wish" in txt or "not" in txt or "decline" in val:
+                            sel.select_option(value=opt.get_attribute("value") or opt.inner_text())
+                            break
+        except Exception as e:
+            logger.warning(f"Error handling compliance dropdowns: {e}")
+
     def apply_online(self, job: JobListing, package: ApplicationPackage, submit_live: bool = False) -> Dict:
         """
         Navigates to the job's source_url, detects account requirements, completes registration/login if required,
@@ -240,15 +282,20 @@ class BrowserApplicant:
                         pass
 
                 # 3. Fill standard input fields if present
-                self._fill_field(page, ["first_name", "first-name", "fname"], self.profile.name.split()[0])
-                self._fill_field(page, ["last_name", "last-name", "lname"], " ".join(self.profile.name.split()[1:]))
-                self._fill_field(page, ["name", "full_name", "full-name"], self.profile.name)
-                self._fill_field(page, ["email", "email_address"], self.profile.email)
+                self._fill_field(page, ["first_name", "first-name", "fname", "given-name", "given_name", "first"], self.profile.name.split()[0])
+                self._fill_field(page, ["last_name", "last-name", "lname", "family-name", "family_name", "last"], " ".join(self.profile.name.split()[1:]))
+                self._fill_field(page, ["name", "full_name", "full-name", "applicant_name"], self.profile.name)
+                self._fill_field(page, ["email", "email_address", "email-address"], self.profile.email)
                 phone_val = getattr(self.profile, "phone", "Available Upon Request")
-                self._fill_field(page, ["phone", "mobile", "telephone"], phone_val)
-                self._fill_field(page, ["location", "city", "address"], self.profile.location)
+                self._fill_field(page, ["phone", "mobile", "telephone", "phone_number", "phone-number"], phone_val)
+                self._fill_field(page, ["location", "city", "address", "current_location"], self.profile.location)
+                if hasattr(self.profile, "linkedin"):
+                    self._fill_field(page, ["linkedin", "website", "portfolio", "url"], self.profile.linkedin)
 
-                # 4. Fill cover letter / notes / system steering brief
+                # 4. Fill compliance & work authorization dropdowns
+                self.handle_dropdowns_and_compliance(page)
+
+                # 5. Fill cover letter / notes / system steering brief
                 cover_text = f"{package.translucent_brief_markdown}\n\n{package.cover_letter_markdown}"
                 self._fill_textarea(page, ["cover_letter", "cover-letter", "comments", "additional_info", "brief"], cover_text)
 
