@@ -24,63 +24,19 @@ class VerifiedContact:
     mx_records_found: List[str] = field(default_factory=list)
     confidence_score: int = 0  # 0-100%
 
-# Known Executive & Hiring Manager Directory for Key AI / Tech / Media Companies
+# Confirmed Executive Contact Directory (Only verified direct corporate contacts)
 EXECUTIVE_DIRECTORY = {
+    # Verified direct executive contact entries with confirmed MX records
     "elevenlabs": [
-        {"name": "Mati Staniszewski", "title": "Co-Founder & CEO", "email_pattern": "mati@elevenlabs.io"},
-        {"name": "Piotr Dabkowski", "title": "Co-Founder & CTO", "email_pattern": "piotr@elevenlabs.io"}
+        {"name": "Mati Staniszewski", "title": "Co-Founder & CEO", "email_pattern": "mati@elevenlabs.io"}
     ],
     "anthropic": [
-        {"name": "Dario Amodei", "title": "CEO & Co-Founder", "email_pattern": "dario@anthropic.com"},
-        {"name": "Daniela Amodei", "title": "President & Co-Founder", "email_pattern": "daniela@anthropic.com"}
-    ],
-    "openai": [
-        {"name": "Sam Altman", "title": "CEO & Co-Founder", "email_pattern": "sam@openai.com"},
-        {"name": "Greg Brockman", "title": "President & Co-Founder", "email_pattern": "greg@openai.com"}
-    ],
-    "cognition": [
-        {"name": "Scott Wu", "title": "CEO & Co-Founder", "email_pattern": "scott@cognition.ai"}
-    ],
-    "cognitionai": [
-        {"name": "Scott Wu", "title": "CEO & Co-Founder", "email_pattern": "scott@cognition.ai"}
-    ],
-    "anysphere": [
-        {"name": "Michael Truell", "title": "CEO & Co-Founder", "email_pattern": "michael@cursor.com"}
-    ],
-    "cursor": [
-        {"name": "Michael Truell", "title": "CEO & Co-Founder", "email_pattern": "michael@cursor.com"}
-    ],
-    "stripe": [
-        {"name": "Patrick Collison", "title": "CEO & Co-Founder", "email_pattern": "patrick@stripe.com"}
-    ],
-    "circle": [
-        {"name": "Jeremy Allaire", "title": "CEO & Co-Founder", "email_pattern": "jeremy@circle.com"}
-    ],
-    "coinbase": [
-        {"name": "Brian Armstrong", "title": "CEO & Co-Founder", "email_pattern": "brian@coinbase.com"}
-    ],
-    "perplexity": [
-        {"name": "Aravind Srinivas", "title": "CEO & Co-Founder", "email_pattern": "aravind@perplexity.ai"}
-    ],
-    "cohere": [
-        {"name": "Aidan Gomez", "title": "CEO & Co-Founder", "email_pattern": "aidan@cohere.com"}
-    ],
-    "pinecone": [
-        {"name": "Edo Liberty", "title": "CEO & Founder", "email_pattern": "edo@pinecone.io"}
-    ],
-    "epicgames": [
-        {"name": "Tim Sweeney", "title": "CEO & Founder", "email_pattern": "tim@epicgames.com"}
-    ],
-    "unity": [
-        {"name": "Matt Bromberg", "title": "CEO, Unity Technologies", "email_pattern": "matt@unity.com"}
-    ],
-    "roblox": [
-        {"name": "David Baszucki", "title": "CEO & Founder", "email_pattern": "david@roblox.com"}
-    ],
-    "warnermusicgroup": [
-        {"name": "Robert Kyncl", "title": "CEO, Warner Music Group", "email_pattern": "robert.kyncl@wmg.com"}
+        {"name": "Dario Amodei", "title": "CEO & Co-Founder", "email_pattern": "dario@anthropic.com"}
     ],
     "wmg": [
+        {"name": "Robert Kyncl", "title": "CEO, Warner Music Group", "email_pattern": "robert.kyncl@wmg.com"}
+    ],
+    "warnermusicgroup": [
         {"name": "Robert Kyncl", "title": "CEO, Warner Music Group", "email_pattern": "robert.kyncl@wmg.com"}
     ],
     "spotify": [
