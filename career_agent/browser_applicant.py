@@ -371,11 +371,22 @@ class BrowserApplicant:
                 custom_qa = self.answer_custom_open_ended_questions(page, job)
                 result["custom_questions_answered"] = custom_qa
 
-                # 8. Strict verification of live form inputs presence
+                # 8. Strict verification of live candidate form inputs presence
                 visible_inputs = [el for el in page.query_selector_all("input, textarea, select") if el.is_visible()]
-                if len(visible_inputs) == 0:
-                    result["status"] = "NO_LIVE_FORM_INPUTS_FOUND"
-                    result["details"] = f"Visited {page.url} but no live job application input fields were found on the page."
+                candidate_form_inputs = []
+                for el in visible_inputs:
+                    attr_text = (
+                        (el.get_attribute("name") or "") + " " +
+                        (el.get_attribute("id") or "") + " " +
+                        (el.get_attribute("placeholder") or "") + " " +
+                        (el.get_attribute("aria-label") or "")
+                    ).lower()
+                    if any(k in attr_text for k in ["first", "last", "email", "phone", "name", "resume", "cover", "applicant", "city", "address", "linkedin", "portfolio"]):
+                        candidate_form_inputs.append(el)
+
+                if len(candidate_form_inputs) == 0 and fields_filled == 0:
+                    result["status"] = "NO_CANDIDATE_FORM_INPUTS_FOUND"
+                    result["details"] = f"Visited {page.url} (detected {len(visible_inputs)} general elements), but no live candidate application form fields were visible or populated."
                 else:
                     # Save pre-submission screenshot
                     screenshot_file = self.screenshots_dir / f"{job.id}_application.png"
@@ -391,10 +402,10 @@ class BrowserApplicant:
                             result["details"] = "Application form submitted live via Chrome Playwright engine."
                         else:
                             result["status"] = "PREFILLED_NEEDS_SUBMIT_CLICK"
-                            result["details"] = f"Form pre-filled cleanly with {len(visible_inputs)} visible inputs. Submit button requires final click."
+                            result["details"] = f"Form pre-filled cleanly with {len(candidate_form_inputs)} candidate inputs. Submit button requires final click."
                     else:
                         result["status"] = "PREFILLED_PREVIEW_READY"
-                        result["details"] = f"Form pre-filled and verified with {len(visible_inputs)} visible inputs. Screenshot captured at {screenshot_file.name}."
+                        result["details"] = f"Form pre-filled and verified with {len(candidate_form_inputs)} candidate inputs ({fields_filled} profile fields filled). Screenshot captured at {screenshot_file.name}."
 
                 browser.close()
 
