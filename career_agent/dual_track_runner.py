@@ -49,7 +49,8 @@ class DualTrackBatchRunner:
             os.environ["SAVE_AS_DRAFT"] = "true"
 
         # Fetch candidate target enterprises from SQLite DB
-        enterprises = self.db.get_high_intensity_enterprises(min_score=50)
+        raw_enterprises = self.db.get_high_intensity_enterprises(min_score=50)
+        enterprises = [e for e in raw_enterprises if not ('scale' in e.domain and any(c.isdigit() for c in e.domain))]
         dispatched_count = 0
         failed_count = 0
         hold_count = 0
@@ -106,7 +107,8 @@ class DualTrackBatchRunner:
         Track B: Searches target company career portals, pre-fills online forms using Playwright Chrome,
         answers custom AI questions, handles account creation / OTP codes, and saves full-page screenshots.
         """
-        enterprises = self.db.get_high_intensity_enterprises(min_score=70)
+        raw_enterprises = self.db.get_high_intensity_enterprises(min_score=70)
+        enterprises = [e for e in raw_enterprises if not ('scale' in e.domain and any(c.isdigit() for c in e.domain))]
         processed_count = 0
         prefilled_count = 0
         screenshots = []
