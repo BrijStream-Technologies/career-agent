@@ -140,14 +140,14 @@ def build_pdf(filename="career_agent/resumes/Sylvester_Floyd_Carter_IV_Resume.pd
     # Executive Profile
     story.append(Paragraph("EXECUTIVE PROFILE & VALUE PROPOSITION", section_header))
     summary_text = (
-        "Accomplished executive leader with over 20 years of operational P&L mastery, high-stakes IP asset management, "
+        "Accomplished executive leader with over 20 years of operational P&amp;L mastery, high-stakes IP asset management, "
         "and pioneer-level agentic AI system orchestration. Proven history managing global multi-million-dollar entertainment "
         "and catalog assets for iconic Diamond and Grammy-winning artists (Destiny's Child/Beyoncé, Mary J. Blige, TLC, Mary Mary), "
         "paired with executive advisory for K-Pop pioneers (Park Bom / 2NE1). As founder and chief AI architect of BrijStream Technologies, "
         "pioneered high-leverage agentic orchestration—steering autonomous AI agent swarms to construct and verify production-grade, "
         "multi-tenant microservices, patent-backed dynamic synchronization engines (Patent PMG-2025-001), and open-source verification "
-        "tooling (attest-cli, resolution-normalise). Specializes in bridging commercial strategy, corporate governance, and cutting-edge "
-        "agentic workflows to dramatically accelerate enterprise software delivery and eliminate operational bloat."
+        "tooling (attest-cli, resolution-normalise). Specializes in bridging commercial strategy, corporate governance, and production "
+        "agentic workflows to accelerate enterprise software delivery and eliminate operational bloat."
     )
     story.append(Paragraph(summary_text, body_summary))
     story.append(HRFlowable(width="100%", thickness=0.5, color=accent_bar, spaceBefore=4, spaceAfter=6))
@@ -157,7 +157,7 @@ def build_pdf(filename="career_agent/resumes/Sylvester_Floyd_Carter_IV_Resume.pd
     competencies = [
         [
             Paragraph("<b>• Enterprise AI Transformation:</b> Agentic workflow architecture, LLM system steering, automated QA & testing pipelines.", bullet_style),
-            Paragraph("<b>• Executive Operations & P&L:</b> 20+ years managing multi-million-dollar catalog budgets, licensing, and corporate royalties.", bullet_style)
+            Paragraph("<b>• Executive Operations &amp; P&amp;L:</b> 20+ years managing multi-million-dollar catalog budgets, licensing, and corporate royalties.", bullet_style)
         ],
         [
             Paragraph("<b>• Intellectual Property & Patents:</b> Sole inventor, Patent PMG-2025-001 (Autonomous Media & Dynamic Audio Synchronization).", bullet_style),
@@ -217,12 +217,14 @@ def build_pdf(filename="career_agent/resumes/Sylvester_Floyd_Carter_IV_Resume.pd
     ]
     t3 = Table(r3_header, colWidths=[380, 150])
     t3.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'TOP'), ('PADDING', (0,0), (-1,-1), 0)]))
-    story.append(t3)
-    story.append(Spacer(1, 3))
-    story.append(Paragraph("• Directed end-to-end operational execution across four commercial divisions for the world's #1 urban artist management enterprise.", bullet_style))
-    story.append(Paragraph("• Managed multi-million-dollar operational budgets and tour logistics for global superstar roster: Destiny's Child / Beyoncé (32x Grammy Award Winner), Mary J. Blige (9x Grammy Award Winner), Earth Wind & Fire, and Chaka Khan.", bullet_style))
-    story.append(Paragraph("• Negotiated and audited multi-tier publishing administration, master licensing agreements, and vendor supply chain logistics.", bullet_style))
-    story.append(Spacer(1, 6))
+    story.append(KeepTogether([
+        t3,
+        Spacer(1, 3),
+        Paragraph("• Directed end-to-end operational execution across four commercial divisions for the world's #1 urban artist management enterprise.", bullet_style),
+        Paragraph("• Managed multi-million-dollar operational budgets and tour logistics for global superstar roster: Destiny's Child / Beyoncé (32x Grammy Award Winner), Mary J. Blige (9x Grammy Award Winner), Earth Wind &amp; Fire, and Chaka Khan.", bullet_style),
+        Paragraph("• Negotiated and audited multi-tier publishing administration, master licensing agreements, and vendor supply chain logistics.", bullet_style),
+        Spacer(1, 6),
+    ]))
 
     # Role 4: Yysman & Left Eye
     r4_header = [
