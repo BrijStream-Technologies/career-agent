@@ -122,7 +122,10 @@ class BrowserApplicant:
             "receptionist", "clerk", "intern", "internship", "junior", "associate", "entry level",
             "contractor", "trainee", "student", "sdr", "bdr", "sales representative", "sales rep",
             "designer", "recruiter", "payroll", "finance", "accounting", "teller",
-            "support engineer", "customer success", "office manager"
+            "support engineer", "customer success", "office manager",
+            "fellow", "fellows", "fellowship",
+            "life sciences", "manufacturing", "cmc", "clinical", "biotech",
+            "counsel", "attorney", "paralegal", "facilities", "culinary", "create alert", "sign in"
         ]
         EXECUTIVE_TARGET_KEYWORDS = [
             # Technical Leadership & Executive
@@ -130,9 +133,9 @@ class BrowserApplicant:
             "engineering manager", "software engineering manager", "tech lead", "lead engineer", "lead software",
             "technical director", "steering", "executive",
 
-            # Staff, Principal & Fellow
-            "principal", "staff engineer", "staff software", "senior staff", "distinguished", "fellow",
-            "founding engineer", "founding ai", "lead",
+            # Staff & Principal
+            "principal", "staff engineer", "staff software", "senior staff", "distinguished",
+            "founding engineer", "founding ai",
 
             # AI, Agents & Applied Systems
             "ai", "artificial intelligence", "applied ai", "agentic", "agent", "inference",
@@ -164,20 +167,27 @@ class BrowserApplicant:
                     title_lower = title_text.lower()
                     href_lower = href.lower()
 
-                    # Reject marketing / corporate info URLs
-                    if any(non_job in href_lower for non_job in ["/product/", "/solutions/", "/company/", "/about/", "/leadership", "/privacy", "/legal/", "/blog/", "/resources/", "utm_source="]):
+                    # Reject marketing / corporate info / login / job-alert URLs
+                    if any(non_job in href_lower for non_job in [
+                        "/product/", "/solutions/", "/company/", "/about/", "/leadership",
+                        "/privacy", "/legal/", "/blog/", "/resources/", "utm_source=",
+                        "my.greenhouse.io", "/users/sign_in", "/sign_in", "/login", "job_alert"
+                    ]):
                         continue
 
                     # 1. Reject forbidden non-executive tiers
                     if any(ft in title_lower for ft in FORBIDDEN_TIERS):
                         continue
 
-                    # 2. Must match executive AI / systems architecture target criteria
-                    is_target = any(kw in title_lower or kw in href_lower for kw in EXECUTIVE_TARGET_KEYWORDS)
-                    is_job_link = (
-                        any(kw in href_lower for kw in ["/job", "/jobs/", "/position", "/opening", "ashbyhq.com/", "greenhouse.io/", "lever.co/", "workable.com/"]) or
-                        (any(char.isdigit() for char in href_lower) and len(href.split("/")) >= 3)
-                    )
+                    # 2. Must match executive AI / systems architecture target criteria (title ONLY — never URL slug)
+                    is_target = any(kw in title_lower for kw in EXECUTIVE_TARGET_KEYWORDS)
+                    if "greenhouse.io" in href_lower:
+                        is_job_link = "/jobs/" in href_lower
+                    else:
+                        is_job_link = (
+                            any(kw in href_lower for kw in ["/job", "/jobs/", "/position", "/opening", "ashbyhq.com/", "lever.co/", "workable.com/"]) or
+                            (any(char.isdigit() for char in href_lower) and len(href.split("/")) >= 3)
+                        )
 
                     if is_target and is_job_link:
                         if href.startswith("/"):
@@ -215,10 +225,14 @@ class BrowserApplicant:
         parsed = urlparse(current_url)
         path_parts = [p for p in parsed.path.strip("/").split("/") if p]
 
+        # 0. Reject ATS login / job-alert portals (e.g. my.greenhouse.io/users/sign_in)
+        if any(bad in current_url for bad in ["my.greenhouse.io", "/users/sign_in", "/sign_in", "/login", "job_alert"]):
+            return False, f"Page '{page.url}' is a Sign-In or Job Alert portal, NOT a job application form."
+
         # 1. Directory sitemap detection
         if any(host in parsed.netloc for host in ["ashbyhq.com", "greenhouse.io", "lever.co", "workable.com"]):
-            if len(path_parts) <= 1:
-                return False, f"Page '{page.url}' is a Career Directory Page (single path segment '{path_parts}')."
+            if len(path_parts) <= 1 or ("greenhouse.io" in parsed.netloc and "jobs" not in path_parts):
+                return False, f"Page '{page.url}' is a Career Directory Page (path '{path_parts}')."
 
         # 2. Extract 100% of visible page text (Zero Partiality Ingestion)
         full_text = ""
@@ -316,7 +330,7 @@ class BrowserApplicant:
             return FieldIntent.IDENTITY_GITHUB
         elif any(k in combined for k in ["website", "portfolio", "personal_website", "publication", "url", "profile link"]):
             return FieldIntent.IDENTITY_WEBSITE
-        elif any(k in combined for k in ["passport", "citizenship", "nationality", "passport country"]):
+        elif any(k in combined for k in ["passport", "citizenship", "nationality", "passport country", "country of residence"]):
             return FieldIntent.IDENTITY_PASSPORT
         elif any(k in combined for k in ["years", "how many years", "years of experience"]) or ("number" in attr_text and any(k in combined for k in ["experience", "years", "rate", "scale"])):
             return FieldIntent.NUMERIC_EXPERIENCE
@@ -464,7 +478,18 @@ class BrowserApplicant:
                 if tag_name not in ["input", "textarea"]:
                     continue
 
-                if "name" in text_lower and not any(k in text_lower for k in ["preferred", "company", "refer"]):
+                if any(k in text_lower for k in ["first name", "first_name", "given name"]) and tag_name == "input" and input_type in ["text", ""]:
+                    target_el.fill(first)
+                    filled_summary["identity_filled"] += 1
+                elif any(k in text_lower for k in ["last name", "last_name", "family name", "surname"]) and tag_name == "input" and input_type in ["text", ""]:
+                    target_el.fill(f"{last} {suffix}".strip() if suffix else last)
+                    filled_summary["identity_filled"] += 1
+                elif "middle" in text_lower and "name" in text_lower and tag_name == "input" and input_type in ["text", ""]:
+                    target_el.fill(middle)
+                    filled_summary["identity_filled"] += 1
+                elif "pronounce" in text_lower:
+                    continue
+                elif "name" in text_lower and not any(k in text_lower for k in ["preferred", "company", "refer", "first", "last", "middle", "pronounce"]):
                     if tag_name == "input" and input_type in ["text", ""]:
                         target_el.fill(full_name)
                         filled_summary["identity_filled"] += 1
@@ -576,12 +601,85 @@ class BrowserApplicant:
             except Exception as err:
                 logger.warning(f"Error executing fill for field {field['label']}: {err}")
 
+        # Guaranteed Email Post-Autofill Fallback (prevents ATS resume-autofill from leaving Email blank)
+        try:
+            for em_el in page.query_selector_all("input[type='email'], input[name*='email' i], input[id*='email' i]"):
+                try:
+                    if em_el.is_visible() and not (em_el.input_value() or "").strip():
+                        em_el.fill(email)
+                        filled_summary["identity_filled"] += 1
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+        # Greenhouse / Modern ATS React-Select Combobox Handler
+        try:
+            comboboxes = page.query_selector_all("input[role='combobox'], input[aria-autocomplete='list']")
+            for cb in comboboxes:
+                try:
+                    if not cb.is_visible():
+                        continue
+                    cb_lbl = cb.evaluate("""el => {
+                        let id = el.id;
+                        if (id) {
+                            let l = document.querySelector(`label[for="${id}"]`);
+                            if (l) return l.innerText;
+                        }
+                        let parent = el.closest('.select__control, .field, fieldset, div');
+                        if (parent && parent.parentElement) {
+                            let l = parent.parentElement.querySelector('label, legend');
+                            if (l) return l.innerText;
+                        }
+                        return el.getAttribute('aria-label') || el.placeholder || '';
+                    }""").strip().lower()
+                    if not cb_lbl:
+                        continue
+
+                    preferred_options = []
+                    if any(k in cb_lbl for k in ["sponsor", "visa", "interviewed", "worked before", "previously worked"]):
+                        preferred_options = ["No", "No, I do not"]
+                    elif any(k in cb_lbl for k in ["authorized", "legally", "eligible", "in person", "in-person", "office", "relocat", "ai policy", "arbitrat", "agree", "acknowledge", "consent"]):
+                        preferred_options = ["Yes", "I agree", "Acknowledge"]
+                    elif any(k in cb_lbl for k in ["gender", "hispanic", "latino", "race", "ethnicity", "veteran", "disability"]):
+                        preferred_options = ["Decline", "I don't wish to answer", "Prefer not to say", "Do not wish"]
+                    elif "country" in cb_lbl:
+                        preferred_options = ["United States"]
+                    else:
+                        continue
+
+                    cb.click()
+                    page.wait_for_timeout(250)
+                    options = page.query_selector_all("[role='option'], .select__option, [id*='react-select'][id*='-option-']")
+                    selected = False
+                    for pref in preferred_options:
+                        for opt in options:
+                            try:
+                                if opt.is_visible() and pref.lower() in (opt.inner_text() or "").strip().lower():
+                                    opt.click()
+                                    filled_summary["compliance_checked"] += 1
+                                    selected = True
+                                    break
+                            except Exception:
+                                pass
+                        if selected:
+                            break
+                    if not selected:
+                        page.keyboard.press("Escape")
+                except Exception:
+                    pass
+        except Exception as cb_err:
+            logger.warning(f"Error during React-Select combobox sweep: {cb_err}")
+
         # Universal Sweep: Any remaining visible empty textarea or text input receives persona response
         try:
             unfilled_textareas = page.query_selector_all("textarea, input[type='text']")
             for ut in unfilled_textareas:
                 try:
                     if not ut.is_visible():
+                        continue
+                    # NEVER type prose into React-Select combobox search inputs or autocomplete widgets
+                    if (ut.get_attribute("role") or "").lower() == "combobox" or (ut.get_attribute("aria-autocomplete") or "").lower() == "list":
                         continue
                     current_val = (ut.input_value() or "").strip()
                     if not current_val:
@@ -606,7 +704,10 @@ class BrowserApplicant:
                                 ut.fill("")
                             elif any(k in lbl_lower for k in ["github", "url", "link", "website", "portfolio", "scholar"]):
                                 ut.fill(getattr(self.profile, "github", "https://github.com/BrijStream-Technologies"))
-                            elif any(k in lbl_lower for k in ["refer", "who referred", "referrer", "source"]):
+                            elif any(k in lbl_lower for k in ["open source", "open-source", "oss"]):
+                                ut.fill("Built and open-sourced attest-cli and resolution-normalise (https://github.com/BrijStream-Technologies) for vendor-neutral compute verification, billing attestation, and deterministic prompt auditability.")
+                                filled_summary["essays_filled"] += 1
+                            elif any(k in lbl_lower for k in ["refer", "who referred", "referrer", "referral source", "how did you hear", "where did you hear", "hear about"]):
                                 ut.fill("Executive Direct Network")
                             elif any(k in lbl_lower for k in ["years", "how many"]):
                                 ut.fill("15")
