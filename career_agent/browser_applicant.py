@@ -310,9 +310,9 @@ class BrowserApplicant:
             return FieldIntent.IDENTITY_PHONE
         elif any(k in combined for k in ["linkedin", "linkedin_url", "linkedin_profile"]):
             return FieldIntent.IDENTITY_LINKEDIN
-        elif any(k in combined for k in ["github", "github_url", "github_profile"]):
+        elif any(k in combined for k in ["github", "github_url", "github_profile", "other relevant url", "relevant url", "other url", "google scholar", "code sample"]):
             return FieldIntent.IDENTITY_GITHUB
-        elif any(k in combined for k in ["website", "portfolio", "personal_website", "publication"]):
+        elif any(k in combined for k in ["website", "portfolio", "personal_website", "publication", "url", "profile link"]):
             return FieldIntent.IDENTITY_WEBSITE
         elif any(k in combined for k in ["twitter", "x_profile", "x profile", "twitter_url", "twitter_handle"]):
             return FieldIntent.IDENTITY_TWITTER
@@ -604,11 +604,13 @@ class BrowserApplicant:
                                 ut.fill("United States")
                             elif any(k in lbl_lower for k in ["twitter", "x profile", "x_profile"]):
                                 ut.fill("")
+                            elif any(k in lbl_lower for k in ["github", "url", "link", "website", "portfolio", "scholar"]):
+                                ut.fill(getattr(self.profile, "github", "https://github.com/BrijStream-Technologies"))
                             elif any(k in lbl_lower for k in ["refer", "who referred", "referrer", "source"]):
                                 ut.fill("Executive Direct Network")
                             elif any(k in lbl_lower for k in ["years", "how many"]):
                                 ut.fill("15")
-                            elif not any(k in lbl_lower for k in ["first", "last", "preferred", "email", "phone", "linkedin", "github", "resume"]):
+                            elif not any(k in lbl_lower for k in ["first", "last", "preferred", "email", "phone", "linkedin", "github", "resume", "url", "link", "website", "portfolio"]):
                                 synthesized = self.generate_authentic_answer(parent_lbl, job)
                                 ut.fill(synthesized)
                                 filled_summary["essays_filled"] += 1
@@ -834,6 +836,11 @@ class BrowserApplicant:
                     if "example.com" in val or "As an AI Systems Architect" in val or not val:
                         readback_result["is_clean"] = False
                         readback_result["errors"].append(f"LinkedIn input '{item['label']}' is invalid or contains bio text.")
+
+                if any(k in combined for k in ["url", "github", "website", "portfolio", "link"]) and "linkedin" not in combined and "twitter" not in combined:
+                    if val and (not val.startswith(("http://", "https://")) or " " in val):
+                        readback_result["is_clean"] = False
+                        readback_result["errors"].append(f"URL input '{item['label']}' contains non-URL text: '{val[:60]}'")
 
         except Exception as err:
             logger.warning(f"Error executing live DOM readback pass: {err}")

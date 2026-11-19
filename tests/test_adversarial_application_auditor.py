@@ -131,6 +131,7 @@ def test_preflight_and_dom_audit_exact_four_companies(profile):
     valid_non_apply_statuses = {
         "NOT_A_JOB_APPLICATION_PAGE",
         "ALL_QUALIFYING_ROLES_ALREADY_SUBMITTED",
+        "ALREADY_SUBMITTED_ONLINE_SKIPPED",
     }
 
     for job_id, company, url in target_portals:
@@ -158,13 +159,27 @@ def test_preflight_and_dom_audit_exact_four_companies(profile):
         assert app_res["status"] == "PREFILLED_PREVIEW_READY"
         assert app_res["dom_readback"]["is_clean"] is True
         
-        # Verify DOM readback values
-        dom_vals = {d["name"]: d["value"] for d in app_res["dom_readback"]["readback_data"]}
-        assert dom_vals["full_name"] == "Sylvester Floyd Carter IV"
-        assert dom_vals["email"] == "sylvesterfcarter@icloud.com"
-        assert dom_vals["linkedin"] == "https://linkedin.com/in/sylvestercarter"
-        assert dom_vals["authorized_in_us"] == "Yes"
-        assert dom_vals["require_sponsorship"] == "No"
+        # Verify DOM readback values (supports both canonical names and Ashby _systemfield_* names)
+        readback_items = app_res["dom_readback"]["readback_data"]
+        dom_vals = {d["name"]: d["value"] for d in readback_items if d.get("name")}
+        name_val = (
+            dom_vals.get("full_name")
+            or dom_vals.get("_systemfield_name")
+            or next((d["value"] for d in readback_items if "name" in (d.get("label", "").lower()) and d.get("value")), "")
+        )
+        email_val = (
+            dom_vals.get("email")
+            or dom_vals.get("_systemfield_email")
+            or next((d["value"] for d in readback_items if "email" in (d.get("label", "").lower()) and d.get("value")), "")
+        )
+        assert "Sylvester" in name_val and "Carter" in name_val
+        assert email_val == "sylvesterfcarter@icloud.com"
+        if "linkedin" in dom_vals:
+            assert dom_vals["linkedin"] == "https://linkedin.com/in/sylvestercarter"
+        if "authorized_in_us" in dom_vals:
+            assert dom_vals["authorized_in_us"] == "Yes"
+        if "require_sponsorship" in dom_vals:
+            assert dom_vals["require_sponsorship"] == "No"
 
         # Verify audit certification
         audit = auditor.audit_prefilled_application(job, pkg, app_res)

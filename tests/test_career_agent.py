@@ -338,6 +338,26 @@ def test_browser_applicant_rejects_newsletter_forms(profile, sample_remote_job):
     assert is_valid is False
     assert "Newsletter" in msg or "no Name or Resume" in msg
 
+def test_browser_applicant_url_field_classification_and_readback_guard(profile):
+    from career_agent.browser_applicant import BrowserApplicant, FieldIntent
+    applicant = BrowserApplicant(profile, headless=True)
+
+    assert applicant.classify_field_intent("input", "other_urls", "Other relevant URLs") == FieldIntent.IDENTITY_GITHUB
+    assert applicant.classify_field_intent("input", "portfolio", "Portfolio URL") == FieldIntent.IDENTITY_WEBSITE
+
+    class MockBadUrlPage:
+        def evaluate(self, script):
+            return [
+                {"id": "name", "name": "_systemfield_name", "type": "text", "value": "Sylvester Floyd Carter IV", "checked": False, "label": "Name"},
+                {"id": "email", "name": "_systemfield_email", "type": "email", "value": "sylvesterfcarter@icloud.com", "checked": False, "label": "Email"},
+                {"id": "urls", "name": "other_urls", "type": "text", "value": "I bring empirical system steering and executive AI architecture.", "checked": False, "label": "Other relevant URLs"},
+            ]
+
+    readback = applicant.audit_live_dom_readback(MockBadUrlPage(), [])
+    assert readback["is_clean"] is False
+    assert any("contains non-URL text" in err for err in readback["errors"])
+
+
 
 
 
