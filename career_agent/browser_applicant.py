@@ -152,6 +152,12 @@ class BrowserApplicant:
         ]
 
         try:
+            # Wait briefly for SPA-hydrated job boards (SmartRecruiters, Workable) to render links
+            if any(spa in page.url.lower() for spa in ["smartrecruiters.com", "workable.com"]):
+                try:
+                    page.wait_for_load_state("networkidle", timeout=6000)
+                except Exception:
+                    page.wait_for_timeout(2500)
             links = page.query_selector_all("a")
             for link in links:
                 try:
@@ -184,6 +190,11 @@ class BrowserApplicant:
                     is_target = any(kw in title_lower for kw in EXECUTIVE_TARGET_KEYWORDS)
                     if "greenhouse.io" in href_lower:
                         is_job_link = "/jobs/" in href_lower
+                    elif "smartrecruiters.com" in href_lower:
+                        sr_parts = [p for p in urlparse(href).path.strip("/").split("/") if p]
+                        is_job_link = len(sr_parts) >= 2
+                    elif "workable.com" in href_lower:
+                        is_job_link = "/j/" in href_lower
                     else:
                         is_job_link = (
                             any(kw in href_lower for kw in ["/job", "/jobs/", "/position", "/opening", "ashbyhq.com/", "lever.co/", "workable.com/"]) or
@@ -231,7 +242,7 @@ class BrowserApplicant:
             return False, f"Page '{page.url}' is a Sign-In or Job Alert portal, NOT a job application form."
 
         # 1. Directory sitemap detection
-        if any(host in parsed.netloc for host in ["ashbyhq.com", "greenhouse.io", "lever.co", "workable.com"]):
+        if any(host in parsed.netloc for host in ["ashbyhq.com", "greenhouse.io", "lever.co", "workable.com", "smartrecruiters.com"]):
             if len(path_parts) <= 1 or ("greenhouse.io" in parsed.netloc and "jobs" not in path_parts):
                 return False, f"Page '{page.url}' is a Career Directory Page (path '{path_parts}')."
 
@@ -1094,7 +1105,13 @@ class BrowserApplicant:
                         job.source_url = best_role["url"]
 
                         # Step into application form tab for the discovered role
-                        apply_btn = page.query_selector("button:has-text('Apply for this Job'), a:has-text('Apply for this Job'), button:has-text('Application'), a:has-text('Application')")
+                        apply_btn = page.query_selector(
+                            "button:has-text('Apply for this Job'), a:has-text('Apply for this Job'), "
+                            "button:has-text('Apply for this job'), a:has-text('Apply for this job'), "
+                            "button:has-text('Apply now'), a:has-text('Apply now'), "
+                            "button:has-text(\"I'm interested\"), a:has-text(\"I'm interested\"), "
+                            "button:has-text('Application'), a:has-text('Application')"
+                        )
                         if apply_btn and apply_btn.is_visible():
                             try:
                                 apply_btn.click()

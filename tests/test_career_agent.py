@@ -358,6 +358,33 @@ def test_browser_applicant_url_field_classification_and_readback_guard(profile):
     assert readback["is_clean"] is False
     assert any("contains non-URL text" in err for err in readback["errors"])
 
+def test_browser_applicant_ats_guards_and_checkbox_safety(profile, sample_remote_job):
+    from career_agent.browser_applicant import BrowserApplicant, FieldIntent
+    applicant = BrowserApplicant(profile, headless=True)
+
+    # Checkbox mentioning "years" must NOT be classified as NUMERIC_EXPERIENCE
+    assert applicant.classify_field_intent("input", "checkbox consent_2_years", "Contact me for up to 2 years") != FieldIntent.NUMERIC_EXPERIENCE
+
+    class MockPageUrl:
+        def __init__(self, url):
+            self.url = url
+        def evaluate(self, script):
+            return ""
+        def query_selector_all(self, selector):
+            return []
+
+    # MyGreenhouse sign-in trap must be rejected
+    ok_gh, msg_gh = applicant.validate_job_application_page(MockPageUrl("https://my.greenhouse.io/users/sign_in?job_board=xai&source=job_alert_board"), sample_remote_job)
+    assert ok_gh is False
+    assert "Sign-In" in msg_gh
+
+    # SmartRecruiters & Workable board indexes must be treated as directories
+    ok_sr, _ = applicant.validate_job_application_page(MockPageUrl("https://jobs.smartrecruiters.com/Visa"), sample_remote_job)
+    assert ok_sr is False
+    ok_wk, _ = applicant.validate_job_application_page(MockPageUrl("https://apply.workable.com/huggingface"), sample_remote_job)
+    assert ok_wk is False
+
+
 
 
 
