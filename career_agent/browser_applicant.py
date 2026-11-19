@@ -310,12 +310,12 @@ class BrowserApplicant:
             return FieldIntent.IDENTITY_PHONE
         elif any(k in combined for k in ["linkedin", "linkedin_url", "linkedin_profile"]):
             return FieldIntent.IDENTITY_LINKEDIN
+        elif any(k in combined for k in ["twitter", "x_profile", "x profile", "twitter_url", "twitter_handle"]):
+            return FieldIntent.IDENTITY_TWITTER
         elif any(k in combined for k in ["github", "github_url", "github_profile", "other relevant url", "relevant url", "other url", "google scholar", "code sample"]):
             return FieldIntent.IDENTITY_GITHUB
         elif any(k in combined for k in ["website", "portfolio", "personal_website", "publication", "url", "profile link"]):
             return FieldIntent.IDENTITY_WEBSITE
-        elif any(k in combined for k in ["twitter", "x_profile", "x profile", "twitter_url", "twitter_handle"]):
-            return FieldIntent.IDENTITY_TWITTER
         elif any(k in combined for k in ["passport", "citizenship", "nationality", "passport country"]):
             return FieldIntent.IDENTITY_PASSPORT
         elif any(k in combined for k in ["years", "how many years", "years of experience"]) or ("number" in attr_text and any(k in combined for k in ["experience", "years", "rate", "scale"])):

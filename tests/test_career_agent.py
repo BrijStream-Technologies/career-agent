@@ -344,6 +344,7 @@ def test_browser_applicant_url_field_classification_and_readback_guard(profile):
 
     assert applicant.classify_field_intent("input", "other_urls", "Other relevant URLs") == FieldIntent.IDENTITY_GITHUB
     assert applicant.classify_field_intent("input", "portfolio", "Portfolio URL") == FieldIntent.IDENTITY_WEBSITE
+    assert applicant.classify_field_intent("input", "twitter_url", "Twitter URL") == FieldIntent.IDENTITY_TWITTER
 
     class MockBadUrlPage:
         def evaluate(self, script):
