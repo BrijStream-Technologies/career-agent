@@ -75,8 +75,16 @@ def test_executive_direct_pitcher(profile, temp_db):
     assert res["company_name"] == "ElevenLabs"
     assert res["status"] in ["DRAFTED_TO_ICLOUD", "SIMULATED_DISPATCH", "HOLD_UNVERIFIED"]
 
-def test_orchestrator_strategic_pipeline():
+def test_orchestrator_strategic_pipeline(temp_db, monkeypatch):
     orchestrator = CareerAgentOrchestrator(auto_dispatch=False)
+    orchestrator.db = temp_db
+    orchestrator.executive_pitcher.db = temp_db
+    orchestrator.direct_site_applicant.db = temp_db
+    monkeypatch.setattr(
+        orchestrator.executive_pitcher,
+        "pitch_executive_direct",
+        lambda **kwargs: {"status": "SIMULATED_DISPATCH", "company_name": kwargs.get("company_name", "")}
+    )
     digest = orchestrator.run_strategic_intelligence_pipeline()
     assert "Daily Agentic Economy Executive Intelligence Digest" in digest
     assert "ElevenLabs" in digest

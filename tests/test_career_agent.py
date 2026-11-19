@@ -189,8 +189,18 @@ def test_executive_digest_builder(profile, config, sample_remote_job):
     assert "ACTION CHECKLIST" in digest_md
 
 # --- FULL PIPELINE ORCHESTRATOR TEST ---
-def test_orchestrator_pipeline_end_to_end():
-    orchestrator = CareerAgentOrchestrator()
+def test_orchestrator_pipeline_end_to_end(tmp_path, monkeypatch):
+    from career_agent.strategic_database import StrategicDatabase
+    orchestrator = CareerAgentOrchestrator(auto_dispatch=False)
+    temp_db = StrategicDatabase(db_path=tmp_path / "test_orchestrator_e2e.db")
+    orchestrator.db = temp_db
+    orchestrator.executive_pitcher.db = temp_db
+    orchestrator.direct_site_applicant.db = temp_db
+    monkeypatch.setattr(
+        orchestrator.executive_pitcher,
+        "pitch_executive_direct",
+        lambda **kwargs: {"status": "SIMULATED_DISPATCH", "company_name": kwargs.get("company_name", "")}
+    )
     sample_data = [
         {
             "id": "anthropic_fd_lead",
