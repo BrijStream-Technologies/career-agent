@@ -125,7 +125,8 @@ class BrowserApplicant:
             "support engineer", "customer success", "office manager",
             "fellow", "fellows", "fellowship",
             "life sciences", "manufacturing", "cmc", "clinical", "biotech",
-            "counsel", "attorney", "paralegal", "facilities", "culinary", "create alert", "sign in"
+            "counsel", "attorney", "paralegal", "facilities", "culinary", "create alert", "sign in",
+            "talent pool", "future opportunities", "temporary", "freelance"
         ]
         EXECUTIVE_TARGET_KEYWORDS = [
             # Technical Leadership & Executive
@@ -332,7 +333,9 @@ class BrowserApplicant:
             return FieldIntent.IDENTITY_WEBSITE
         elif any(k in combined for k in ["passport", "citizenship", "nationality", "passport country", "country of residence"]):
             return FieldIntent.IDENTITY_PASSPORT
-        elif any(k in combined for k in ["years", "how many years", "years of experience"]) or ("number" in attr_text and any(k in combined for k in ["experience", "years", "rate", "scale"])):
+        elif any(k in combined for k in ["years", "how many years", "years of experience"]) and "checkbox" not in attr_text.lower() and "radio" not in attr_text.lower():
+            return FieldIntent.NUMERIC_EXPERIENCE
+        elif "number" in attr_text and any(k in combined for k in ["experience", "years", "rate", "scale"]):
             return FieldIntent.NUMERIC_EXPERIENCE
         elif any(k in combined for k in ["location", "city", "address", "residence", "current_location"]):
             return FieldIntent.IDENTITY_LOCATION
@@ -583,8 +586,9 @@ class BrowserApplicant:
                     el.fill("")  # Keep clean if no twitter profile requested
                     filled_summary["identity_filled"] += 1
                 elif intent == FieldIntent.NUMERIC_EXPERIENCE:
-                    el.fill("15")
-                    filled_summary["identity_filled"] += 1
+                    if field.get("type", "").lower() not in ["checkbox", "radio"]:
+                        el.fill("15")
+                        filled_summary["identity_filled"] += 1
                 elif intent == FieldIntent.COVER_LETTER:
                     cover_text = f"{package.translucent_brief_markdown}\n\n{package.cover_letter_markdown}"
                     el.fill(cover_text)
@@ -704,6 +708,9 @@ class BrowserApplicant:
                                 ut.fill("")
                             elif any(k in lbl_lower for k in ["github", "url", "link", "website", "portfolio", "scholar"]):
                                 ut.fill(getattr(self.profile, "github", "https://github.com/BrijStream-Technologies"))
+                            elif any(k in lbl_lower for k in ["current company", "company", "employer", "organization"]):
+                                ut.fill("BrijStream Technologies")
+                                filled_summary["identity_filled"] += 1
                             elif any(k in lbl_lower for k in ["open source", "open-source", "oss"]):
                                 ut.fill("Built and open-sourced attest-cli and resolution-normalise (https://github.com/BrijStream-Technologies) for vendor-neutral compute verification, billing attestation, and deterministic prompt auditability.")
                                 filled_summary["essays_filled"] += 1
