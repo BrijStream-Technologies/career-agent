@@ -28,6 +28,41 @@ class FitScorer:
         matched_proofs = []
         audit_details = {}
 
+        # FORBIDDEN TIER GUARD: Immediate 0/100 REJECT for administrative, assistant, or junior descriptions
+        forbidden_terms = [
+            "assistant", "executive assistant", "admin", "administrative", "coordinator", 
+            "receptionist", "clerk", "intern", "internship", "junior", "associate", 
+            "entry level", "sdr", "bdr", "sales representative", "sales rep", "recruiter", "payroll"
+        ]
+        if any(f in title_lower for f in forbidden_terms) or any(f in desc_lower for f in ["executive assistant", "administrative assistant", "office manager", "receptionist"]):
+            return FitScoreResult(
+                job_id=job.id,
+                total_score=0,
+                pillar_breakdown={"Executive Strategy": 0, "AI Engineering & Code": 0, "Domain & IP Fit": 0, "Remote & Comp": 0},
+                matched_proof_points=[],
+                recommendation="REJECT",
+                audit_details={"Forbidden Tier Guard": {"score": "0/100 pts", "deduction_rationale": f"Job title or description matches forbidden administrative/non-executive tier: '{job.title}'."}}
+            )
+
+        # MANDATORY JOB DESCRIPTION RELEVANCE: Must contain core AI Systems / Strategy / Architecture / Engineering Leadership requirements
+        core_requirements = [
+            "ai", "artificial intelligence", "applied ai", "agentic", "agent", "inference", "machine learning", "ml", "llm", "neural",
+            "architect", "systems", "platform", "infrastructure", "infra", "distributed", "cloud", "backend", "core services",
+            "steering", "governance", "lead", "tech lead", "director", "vp", "vice president", "head of", "chief", "cto",
+            "principal", "staff", "distinguished", "fellow", "engineering manager", "software engineering manager",
+            "product manager", "solutions architect", "enterprise architect", "forward deployed", "fde", "mts", "member of technical staff",
+            "founding engineer"
+        ]
+        if not any(req in desc_lower or req in title_lower for req in core_requirements):
+            return FitScoreResult(
+                job_id=job.id,
+                total_score=0,
+                pillar_breakdown={"Executive Strategy": 0, "AI Engineering & Code": 0, "Domain & IP Fit": 0, "Remote & Comp": 0},
+                matched_proof_points=[],
+                recommendation="REJECT",
+                audit_details={"Job Description Relevance": {"score": "0/100 pts", "deduction_rationale": "Job description lacks required AI Systems Architect, Strategy, or Engineering Leadership criteria."}}
+            )
+
         # Pillar 1: Executive & Product Strategy (Max 30 pts)
         exec_score = 0
         strategy_keywords = ["strategy", "product management", "roadmap", "p&l", "executive", "vision", "cross-functional", "leader", "go-to-market"]

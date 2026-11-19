@@ -31,15 +31,29 @@ class SylvesterBrain:
     def classify_question_intent(self, question: str) -> str:
         """
         Classifies an open-ended application question into a core strategic intent category.
+        Uses strict word-boundary matching to prevent false substring positives (e.g., 'strategic' != 'rate').
         """
+        import re
         q_lower = question.lower()
-        if any(k in q_lower for k in ["salary", "compensation", "pay", "expectation", "rate"]):
+
+        def has_any(keywords):
+            return any(re.search(rf"\b{re.escape(k)}\b", q_lower) for k in keywords)
+
+        if has_any(["hear", "referral", "source", "find us", "how did you"]):
+            return "Referral & Source"
+        elif has_any(["linkedin", "social", "github", "portfolio", "website", "url"]):
+            return "LinkedIn & Web Profiles"
+        elif has_any(["salary", "compensation", "pay", "pay rate", "hourly rate", "desired salary", "compensation expectation"]):
             return "Compensation & Scope"
-        elif any(k in q_lower for k in ["why", "company", "join", "interest", "role", "attract"]):
+        elif has_any(["community", "awareness", "rights", "creator", "artist", "policy", "ethics", "public", "education", "governance board", "fellowship"]):
+            return "Community-Facing AI Awareness & Rights Governance"
+        elif has_any(["prompt", "ai agent", "agentic", "steering", "llm", "orchestration", "copilot", "chatgpt", "claude"]):
+            return "Agentic Prompting & AI System Steering"
+        elif has_any(["why", "company", "join", "interest", "role", "attract", "values", "resonate", "mission"]):
             return "Motivation & Strategic Steering Alignment"
-        elif any(k in q_lower for k in ["experience", "project", "built", "technical", "system", "architecture", "code", "tech"]):
+        elif has_any(["experience", "project", "built", "technical", "system", "architecture", "code", "tech", "polyglot", "microservices"]):
             return "Technical Systems Architecture & Microservices"
-        elif any(k in q_lower for k in ["leadership", "manage", "team", "p&l", "operation", "strategy", "director"]):
+        elif has_any(["leadership", "manage", "team", "p&l", "operation", "strategy", "director", "executive"]):
             return "Executive Leadership & P&L Operations"
         else:
             return "General System Steering Posture"
@@ -47,19 +61,33 @@ class SylvesterBrain:
     def synthesize_canonical_answer(self, question: str, company_name: str, role_title: str) -> str:
         """
         Synthesizes a high-impact, authentic response strictly adhering to Sylvester's 
-        Master-Level Executive-Architect Persona & Empirical Receipts:
-        - 88,000 LOC polyglot microservices (Go, Rust, C++, Python, TS, SQL, Shell)
-        - 455/456 passing unit tests (100% integrity)
-        - Patent PMG-2025-001 (Autonomous Media Synchronization & Payment Ledgers)
-        - Executive P&L leadership at Brij Brands (Park Bom / 2NE1) and Music World / Sanctuary Group (Destiny's Child/Beyoncé, Mary J. Blige)
-        - Motivation: Seeking a much larger enterprise stage to steer multi-agent systems and proxy infrastructure
+        Master-Level Executive-Architect Persona & Empirical Receipts.
         """
         intent = self.classify_question_intent(question)
         
-        if intent == "Compensation & Scope":
+        if intent == "Referral & Source":
+            return "Executive Direct Network"
+        elif intent == "LinkedIn & Web Profiles":
+            return "https://linkedin.com/in/sylvestercarter"
+        elif intent == "Compensation & Scope":
             return (
                 f"My total compensation expectation for this {role_title} scope at {company_name} is targeted at "
-                "$250,000+, aligned with executive strategy, multi-LLM proxy governance, and production system architecture scope."
+                "$150,000 - $350,000+ Total Compensation, aligned with executive strategy and system architecture scope."
+            )
+        elif intent == "Community-Facing AI Awareness & Rights Governance":
+            return (
+                f"My approach to community-facing AI awareness fuses 20+ years of executive entertainment leadership "
+                "(Sanctuary Group representing Destiny's Child/Beyoncé, Brij Brands advising Park Bom/2NE1) with Patent PMG-2025-001 "
+                "for creator split ledgers. I focus on educating artists, non-technical founders, and policy councils on creator AI rights, "
+                "zero-slop factual verification, and leveraging AI agents as force multipliers for economic growth."
+            )
+
+        elif intent == "Agentic Prompting & AI System Steering":
+            return (
+                f"I operate as a Master-Level Executive-Architect & System Steering Officer. Rather than micromanaging code syntax, "
+                "I use outcome-driven imperative prompting to direct autonomous AI agents (Antigravity, Claude Code) to architect, "
+                "test, and deploy 88,000+ lines of production polyglot microservices (Go, Rust, C++, Python, TS) with 100% unit test integrity "
+                "(455/456 passing assertions) and zero AI slop tolerance."
             )
         elif intent == "Motivation & Strategic Steering Alignment":
             return (
@@ -68,6 +96,7 @@ class SylvesterBrain:
                 "Having led executive P&L operations at Brij Brands (Park Bom / 2NE1) and Music World / Sanctuary Group "
                 "(Destiny's Child/Beyoncé, Mary J. Blige), I bring both institutional commercial rigor and hands-on system direction."
             )
+
         elif intent == "Technical Systems Architecture & Microservices":
             return (
                 f"My technical execution baseline is grounded in empirical receipts: 88,000+ lines of production polyglot microservices "
@@ -82,9 +111,8 @@ class SylvesterBrain:
             )
         else:
             return (
-                f"As an AI Systems Architect & Executive Strategy Leader (Montgomery, TX), I approach {role_title} at {company_name} "
-                "through empirical verification, zero-fluff truthfulness, and strict system steering. I combine solo force-multiplier "
-                "receipts (88,000 LOC, Patent PMG-2025-001) with executive leadership ambition for a much larger enterprise stage."
+                f"I bring empirical system steering and executive-level AI architecture to {company_name}, "
+                "combining 88,000+ LOC polyglot microservice engineering with institutional commercial leadership."
             )
 
     def train_and_certify_question(self, question: str, company_name: str, role_title: str, ats_platform: str = "Greenhouse") -> SylvesterBrainQuestion:
@@ -169,30 +197,40 @@ class SylvesterBrain:
         self.db.upsert_brain_question(bq)
         return bq
 
-    def run_100_site_training_benchmark(self, target_enterprises: List[Dict]) -> Dict:
+    def run_scaled_training_benchmark(self, target_enterprises: Optional[List[Dict]] = None, max_sites: int = 1000) -> Dict:
         """
-        Runs a training sweep across up to 100 corporate career sites, harvesting open-ended questions,
-        synthesizing persona answers, and certifying them at >= 95% score before live form submission.
+        Runs an expanded training sweep across up to max_sites corporate career sites, harvesting open-ended questions,
+        synthesizing persona-grounded answers, running Graphify path context, and certifying them at >= 95% audit score.
+        Saves all certified questions into SQLite database table sylvester_brain_questions.
         """
+        if not target_enterprises:
+            db_enterprises = self.db.get_high_intensity_enterprises(min_score=0)
+            target_enterprises = [
+                {"company_name": e.company_name, "ats_platform": "Greenhouse", "sector": e.sector}
+                for e in db_enterprises
+            ]
+
         total_questions_harvested = 0
         total_certified = 0
         certified_questions = []
 
-        standard_sample_questions = [
+        expanded_question_taxonomy = [
             "Why do you want to join our engineering and strategic architecture team?",
             "Describe a complex technical system you built solo or steered from architectural vision to production.",
             "What are your total compensation expectations for this position?",
-            "How do you approach AI agent governance, rate limits, and proxy metering?",
-            "Describe your executive operations and P&L management background."
+            "How do you approach AI agent governance, rate limits, multi-LLM routing, and proxy metering?",
+            "Describe your executive operations, team management, and P&L leadership background.",
+            "How do you ensure zero-drift integrity, zero-fluff truthfulness, and high-concurrency microservices delivery?"
         ]
 
-        logger.info(f"Starting SylvesterBrain 100-Site Training Benchmark across {len(target_enterprises)} target corporate portals...")
+        sweep_sites = target_enterprises[:max_sites]
+        logger.info(f"Starting SylvesterBrain Scaled Training Benchmark across {len(sweep_sites)} corporate career sites...")
 
-        for index, ent in enumerate(target_enterprises[:100]):
+        for index, ent in enumerate(sweep_sites):
             comp_name = ent.get("company_name", f"Enterprise #{index + 1}")
             ats = ent.get("ats_platform", "Greenhouse")
 
-            for q_text in standard_sample_questions:
+            for q_text in expanded_question_taxonomy:
                 bq = self.train_and_certify_question(
                     question=q_text,
                     company_name=comp_name,
@@ -205,9 +243,16 @@ class SylvesterBrain:
                     certified_questions.append(bq)
 
         return {
-            "total_sites_processed": min(len(target_enterprises), 100),
+            "total_sites_processed": len(sweep_sites),
             "questions_harvested": total_questions_harvested,
             "certified_95_plus_count": total_certified,
             "certification_rate": f"{(total_certified / max(1, total_questions_harvested)) * 100:.1f}%",
             "certified_questions_sample": [q.canonical_answer[:120] + "..." for q in certified_questions[:5]]
         }
+
+    def run_100_site_training_benchmark(self, target_enterprises: List[Dict]) -> Dict:
+        """
+        Backward-compatible 100-site training benchmark wrapper.
+        """
+        return self.run_scaled_training_benchmark(target_enterprises=target_enterprises, max_sites=100)
+

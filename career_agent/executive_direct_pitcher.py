@@ -10,7 +10,7 @@ import logging
 from typing import Dict, Optional
 from datetime import datetime
 
-from career_agent.config import VerifiedCandidateProfile
+from career_agent.config import VerifiedCandidateProfile, EXCLUDED_CONTACTS, EXCLUDED_COMPANIES
 from career_agent.contact_verifier import ContactVerifier, VerifiedContact
 from career_agent.contact_dispatcher import ContactDispatcher
 from career_agent.package_tailorer import ApplicationPackage
@@ -41,6 +41,20 @@ class ExecutiveDirectPitcher:
         Executes Track A: Generates C-Suite Machine Economy Strategic Transformation Roadmap,
         runs DNS MX deliverability validation, and appends rich HTML package to Apple Mail Drafts.
         """
+        # Strict Permanent Exclusion Guard for Tim Sweeney / Epic Games
+        comp_lower = (company_name or "").lower()
+        email_lower = (exec_email or "").lower()
+        if any(exc in comp_lower for exc in EXCLUDED_COMPANIES) or any(exc in email_lower for exc in EXCLUDED_CONTACTS):
+            logger.warning(f"BLOCKED: Attempted pitch to permanently excluded target {company_name} / {exec_email}. Aborting immediately.")
+            return {
+                "enterprise_id": enterprise_id,
+                "company_name": company_name,
+                "exec_name": exec_name,
+                "exec_email": exec_email,
+                "status": "PERMANENTLY_BLOCKED_EXCLUSION",
+                "details": "Target company/executive is permanently blocked on the active direct communication exclusion list."
+            }
+
         result = {
             "enterprise_id": enterprise_id,
             "company_name": company_name,

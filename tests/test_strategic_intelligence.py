@@ -81,3 +81,31 @@ def test_orchestrator_strategic_pipeline():
     assert "Daily Agentic Economy Executive Intelligence Digest" in digest
     assert "ElevenLabs" in digest
     assert "Anthropic" in digest
+
+def test_graphify_knowledge_graph_god_nodes_and_communities(temp_db):
+    from career_agent.graphify_knowledge_graph import GraphifyKnowledgeGraph
+    kg = GraphifyKnowledgeGraph(db=temp_db)
+    god_nodes = kg.get_god_nodes()
+    assert len(god_nodes) >= 5
+    labels = [g.label for g in god_nodes]
+    assert "88,000 LOC Polyglot Telemetry" in labels
+    assert "Patent PMG-2025-001" in labels
+
+    communities = kg.detect_sector_communities()
+    assert isinstance(communities, dict)
+
+
+def test_dns_preflight_and_ats_priority_queue(temp_db):
+    from career_agent.strategic_database import verify_dns_resolution, rank_ats_target_url
+
+    # Test ATS Priority Scorer
+    assert rank_ats_target_url("https://jobs.ashbyhq.com/cognition/123") == 100
+    assert rank_ats_target_url("https://boards.greenhouse.io/pinecone/jobs/456") == 100
+    assert rank_ats_target_url("https://company.com/careers/job/789") == 80
+    assert rank_ats_target_url("https://randomsite.com") == 50
+
+    # Test DNS verification guard
+    assert verify_dns_resolution("scale999.company.com") is False
+    assert verify_dns_resolution("google.com") is True
+
+

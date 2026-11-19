@@ -1,7 +1,7 @@
 """
 Adversarial Application Auditor module for Sylvester's Autonomous Career Agent (Track B).
 An independent evaluation subagent separate from BrowserApplicant that audits pre-filled forms,
-custom Q&A responses, compliance dropdown selections, identity precision, and screenshot artifacts.
+custom Q&A responses, compliance dropdown selections, identity precision, live DOM readbacks, and screenshot artifacts.
 Scores pre-filled applications on a 100-point rubric and requires >= 95% score for audit certification.
 """
 
@@ -47,9 +47,18 @@ class AdversarialApplicationAuditor:
         feedback = []
 
         # -------------------------------------------------------------
-        # Pillar 1: Candidate Identity Precision (Max 25 pts)
+        # Pillar 1: Candidate Identity Precision & DOM Readback (Max 25 pts)
         # -------------------------------------------------------------
         identity_score = 25
+        dom_readback = app_result.get("dom_readback") or {}
+        
+        if dom_readback and isinstance(dom_readback, dict):
+            if not dom_readback.get("is_clean", True):
+                identity_score -= 15
+                readback_errs = dom_readback.get("errors", [])
+                feedback.append(f"DOM Readback Verification Failure: {readback_errs}")
+
+        # Check Python dataclass integrity
         if getattr(self.profile, "first_name", "") != "Sylvester":
             identity_score -= 10
             feedback.append("First name mismatch: Expected 'Sylvester'.")
@@ -96,12 +105,23 @@ class AdversarialApplicationAuditor:
         status = app_result.get("status", "")
         details = app_result.get("details", "")
 
-        # Reject Fellowships, Internships, Junior/Associate roles
-        FORBIDDEN_LEVELS = ["fellow", "fellowship", "intern", "internship", "junior", "associate", "entry level", "contractor", "trainee", "student"]
+        # Reject Permanently Excluded Companies (Tim Sweeney / Epic Games)
+        from career_agent.config import EXCLUDED_COMPANIES
+        comp_lower = job.company.lower()
+        if any(exc in comp_lower for exc in EXCLUDED_COMPANIES) or "tim sweeney" in comp_lower or "epic games" in comp_lower:
+            compliance_score -= 25
+            feedback.append(f"Permanent Exclusion Violation: Target company '{job.company}' is permanently blocked.")
+
+        # Reject Fellowships, Internships, Junior/Associate roles, Frontend, SDR, Assistants
+        FORBIDDEN_LEVELS = ["fellow", "fellowship", "intern", "internship", "junior", "associate", "entry level", "contractor", "trainee", "student", "frontend", "sdr", "recruiter", "designer", "assistant", "admin"]
         title_lower = job.title.lower()
         if any(fl in title_lower for fl in FORBIDDEN_LEVELS):
             compliance_score -= 25
             feedback.append(f"Role Level Strategy Violation: Target title '{job.title}' contains blacklisted tier ({[fl for fl in FORBIDDEN_LEVELS if fl in title_lower]}). Sylvester targets Executive Architecture & Strategy Lead positions only.")
+
+        if status == "NOT_A_JOB_APPLICATION_PAGE":
+            compliance_score -= 25
+            feedback.append(f"Page Legitimacy Audit Failure: Visited page '{app_result.get('url')}' is a non-job marketing homepage or auth wall.")
 
         missed_qs = app_result.get("missed_questions", [])
         if len(missed_qs) > 0:

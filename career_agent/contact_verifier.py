@@ -69,6 +69,20 @@ class ContactVerifier:
         Discovers exact executive contact, title, and email for target company,
         and runs strict DNS MX deliverability validation.
         """
+        from career_agent.config import EXCLUDED_CONTACTS, EXCLUDED_COMPANIES
+
+        company_clean = company.lower().strip()
+        if any(exc in company_clean for exc in EXCLUDED_COMPANIES):
+            logger.info(f"Skipping contact verification for '{company}': Active direct communication exclusion in place.")
+            return VerifiedContact(
+                company=company,
+                recipient_name="EXCLUDED_ACTIVE_COMMUNICATION",
+                recipient_title="Do Not Contact (Active Conversation)",
+                recipient_email="EXCLUDED",
+                verification_status="EXCLUDED_ACTIVE_DIRECT_COMMUNICATION",
+                confidence_score=0
+            )
+
         company_key = self.clean_domain(company)
         domain = fallback_domain or f"{company_key}.com"
         
@@ -147,9 +161,14 @@ class ContactVerifier:
         """
         mx_servers = []
         try:
-            addrs = socket.getaddrinfo(domain, 25, socket.AF_INET, socket.SOCK_STREAM)
-            if addrs:
-                mx_servers.append(f"mail.{domain} (Resolved IP: {addrs[0][4][0]})")
+            orig_timeout = socket.getdefaulttimeout()
+            socket.setdefaulttimeout(2.0)
+            try:
+                addrs = socket.getaddrinfo(domain, 25, socket.AF_INET, socket.SOCK_STREAM)
+                if addrs:
+                    mx_servers.append(f"mail.{domain} (Resolved IP: {addrs[0][4][0]})")
+            finally:
+                socket.setdefaulttimeout(orig_timeout)
         except Exception:
             pass
 

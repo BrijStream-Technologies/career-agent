@@ -112,3 +112,52 @@ def test_adversarial_application_auditor_fellowship_rejection(profile, tmp_path)
     assert report.is_certified_95_plus is False
     assert report.audit_score < 95
     assert any("Role Level Strategy Violation" in f for f in report.feedback)
+
+def test_preflight_and_dom_audit_exact_four_companies(profile):
+    from career_agent.browser_applicant import BrowserApplicant
+    applicant = BrowserApplicant(profile, headless=True)
+    auditor = AdversarialApplicationAuditor(target_score_threshold=95)
+    scorer = FitScorer(profile, JobSearchConfig())
+    tailorer = PackageTailorer(profile)
+
+    target_portals = [
+        ("live_db_ent_real_0242", "Udio", "https://jobs.ashbyhq.com/udio"),
+        ("live_db_ent_real_0302", "LangChain", "https://jobs.ashbyhq.com/langchain"),
+        ("live_db_ent_real_0241", "Suno", "https://jobs.ashbyhq.com/suno"),
+        ("live_db_ent_real_0441", "LlamaIndex", "https://jobs.ashbyhq.com/llamaindex"),
+    ]
+
+    for job_id, company, url in target_portals:
+        job = JobListing(
+            id=job_id,
+            title="Chief Agentic Steering Officer / Executive AI Architect",
+            company=company,
+            location="Remote - US / Global",
+            is_remote=True,
+            base_salary_min=250000,
+            base_salary_max=400000,
+            estimated_tc=550000,
+            posting_date=datetime.now(),
+            description=f"Executive AI systems architecture for {company}",
+            source_url=url
+        )
+        fit_res = scorer.score_job(job)
+        pkg = tailorer.build_tailored_package(job, fit_res)
+        app_res = applicant.apply_online(job, pkg, submit_live=False)
+
+        assert app_res["status"] == "PREFILLED_PREVIEW_READY"
+        assert app_res["dom_readback"]["is_clean"] is True
+        
+        # Verify DOM readback values
+        dom_vals = {d["name"]: d["value"] for d in app_res["dom_readback"]["readback_data"]}
+        assert dom_vals["full_name"] == "Sylvester Floyd Carter IV"
+        assert dom_vals["email"] == "sylvesterfcarter@icloud.com"
+        assert dom_vals["linkedin"] == "https://linkedin.com/in/sylvestercarter"
+        assert dom_vals["authorized_in_us"] == "Yes"
+        assert dom_vals["require_sponsorship"] == "No"
+
+        # Verify audit certification
+        audit = auditor.audit_prefilled_application(job, pkg, app_res)
+        assert audit.audit_score >= 95
+        assert audit.is_certified_95_plus is True
+

@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 import json
 
+from career_agent.config import EXCLUDED_COMPANIES
+
 @dataclass
 class JobListing:
     id: str
@@ -86,8 +88,13 @@ class JobScanner:
 
     def is_valid_candidate_job(self, listing: JobListing) -> bool:
         """
-        Validates job against remote policy, compensation, age, and anti-ghost rules.
+        Validates job against remote policy, compensation, age, exclusions, and anti-ghost rules.
         """
+        # 0. Excluded Companies & Entities (Strict Blocklist)
+        company_lower = (listing.company or "").lower()
+        if any(exc in company_lower for exc in EXCLUDED_COMPANIES):
+            return False
+
         # 1. Must be remote if required by config
         if self.config.require_remote and not listing.is_remote:
             return False
@@ -106,7 +113,7 @@ class JobScanner:
                 return False
 
         # 5. Blacklisted role titles / levels (Fellowships, Internships, Junior, Entry Level, Contractors, Trainees)
-        FORBIDDEN_LEVELS = ["fellow", "fellowship", "intern", "internship", "junior", "associate", "entry level", "contractor", "trainee", "student"]
+        FORBIDDEN_LEVELS = ["fellowship", "intern", "internship", "junior", "associate", "entry level", "contractor", "trainee", "student"]
         title_lower = listing.title.lower()
         if any(fl in title_lower for fl in FORBIDDEN_LEVELS):
             return False

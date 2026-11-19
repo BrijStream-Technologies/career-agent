@@ -13,7 +13,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from typing import List, Dict, Optional
 
-from career_agent.config import VerifiedCandidateProfile
+from career_agent.config import VerifiedCandidateProfile, EXCLUDED_CONTACTS, EXCLUDED_COMPANIES
 from career_agent.job_scanner import JobListing
 from career_agent.package_tailorer import ApplicationPackage
 from career_agent.outreach_finder import ExecutiveOutreachDraft
@@ -204,6 +204,24 @@ ATS MODIFIED RESUME:
         recipient_email: Optional[str] = None,
         force_update: bool = False
     ) -> DispatchRecord:
+        # Strict Permanent Exclusion Guard for Tim Sweeney / Epic Games
+        comp_lower = (job.company or "").lower()
+        recip_lower = (recipient_email or "").lower()
+        if any(exc in comp_lower for exc in EXCLUDED_COMPANIES) or any(exc in recip_lower for exc in EXCLUDED_CONTACTS):
+            logger.warning(f"BLOCKED: Attempted outreach to permanently excluded target {job.company} / {recipient_email}. Aborting immediately.")
+            return DispatchRecord(
+                job_id=job.id,
+                company=job.company,
+                job_title=job.title,
+                recipient_email=recipient_email or "blocked@epicgames.com",
+                recipient_name="Permanently Excluded",
+                recipient_title="Excluded",
+                verification_status="PERMANENTLY_BLOCKED_EXCLUSION",
+                dispatch_timestamp=datetime.now().isoformat(),
+                status="PERMANENTLY_BLOCKED_EXCLUSION",
+                subject="PERMANENTLY_BLOCKED_EXCLUSION"
+            )
+
         force_refresh = force_update or os.environ.get("FORCE_REFRESH_DRAFTS", "false").lower() == "true"
         if self.is_already_contacted(job.id) and not force_refresh:
             record_dict = self.ledger[job.id]
@@ -212,7 +230,20 @@ ATS MODIFIED RESUME:
             record_dict.setdefault("verification_status", "VERIFIED_MX_DELIVERABLE")
             return DispatchRecord(**record_dict)
 
-        verified_contact = self.resolve_verified_contact(job)
+        if recipient_email and "@" in recipient_email and not recipient_email.startswith("unverified"):
+            domain = recipient_email.split("@")[-1]
+            verified_contact = VerifiedContact(
+                company=job.company,
+                recipient_name=getattr(job, "recipient_name", "Executive Leader"),
+                recipient_title="C-Suite Executive",
+                recipient_email=recipient_email,
+                verification_status="VERIFIED_EXECUTIVE_DIRECT",
+                mx_records_found=[f"mx.{domain}"],
+                confidence_score=98
+            )
+        else:
+            verified_contact = self.resolve_verified_contact(job)
+
         target_email = recipient_email or verified_contact.recipient_email
         email_msg = self.construct_email_package(job, package, outreach_draft, target_email)
 

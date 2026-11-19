@@ -5,7 +5,8 @@ featuring the Dual Summaries (Code Telemetry & Prompting Profile) and 100-Point 
 """
 
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Optional
+from pathlib import Path
 from career_agent.config import VerifiedCandidateProfile, FORBIDDEN_COPY_TERMS
 from career_agent.job_scanner import JobListing
 from career_agent.fit_scorer import FitScoreResult
@@ -19,10 +20,14 @@ class ApplicationPackage:
     cover_letter_markdown: str
     translucent_brief_markdown: str
     verification_status: str  # "VERIFIED_NO_CLICHES"
+    resume_file: Optional[str] = None
+    cover_letter_file: Optional[str] = None
 
 class PackageTailorer:
     def __init__(self, profile: VerifiedCandidateProfile):
         self.profile = profile
+        self.output_dir = Path("/Volumes/BuildDrive/Sylvesters_Skill_Base/career_agent/resumes")
+        self.output_dir.mkdir(parents=True, exist_ok=True)
 
     def build_tailored_package(self, job: JobListing, score_result: FitScoreResult) -> ApplicationPackage:
         resume_md = self.generate_ats_resume(job, score_result)
@@ -32,6 +37,28 @@ class PackageTailorer:
         verified_cover_letter = self.sanitize_copy(cover_letter_md)
         verified_brief = self.sanitize_copy(brief_md)
 
+        # Write resume and cover letter files to disk for Playwright file upload inputs
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        pdf_resume = self.output_dir / "Sylvester_Floyd_Carter_IV_Resume.pdf"
+        
+        if pdf_resume.exists():
+            resume_path = pdf_resume
+        else:
+            resume_path = self.output_dir / f"{job.id}_resume.txt"
+            try:
+                with open(resume_path, "w", encoding="utf-8") as f:
+                    f.write(resume_md)
+            except Exception as e:
+                logger.warning(f"Error writing resume file {resume_path}: {e}")
+
+        cover_path = self.output_dir / f"{job.id}_cover_letter.txt"
+        try:
+            with open(cover_path, "w", encoding="utf-8") as f:
+                f.write(verified_cover_letter)
+        except Exception as e:
+            logger.warning(f"Error writing cover letter file {cover_path}: {e}")
+
+
         return ApplicationPackage(
             job_id=job.id,
             company=job.company,
@@ -39,7 +66,9 @@ class PackageTailorer:
             tailored_resume_markdown=resume_md,
             cover_letter_markdown=verified_cover_letter,
             translucent_brief_markdown=verified_brief,
-            verification_status="VERIFIED_NO_CLICHES"
+            verification_status="VERIFIED_NO_CLICHES",
+            resume_file=str(resume_path),
+            cover_letter_file=str(cover_path)
         )
 
     def generate_translucent_brief(self, job: JobListing, score_result: FitScoreResult) -> str:
@@ -83,23 +112,28 @@ class PackageTailorer:
 """
 
     def generate_ats_resume(self, job: JobListing, score_result: FitScoreResult) -> str:
-        proof_summary = "\n".join([f"- {p}" for p in score_result.matched_proof_points])
-        
         return f"""# {self.profile.name}
-**{self.profile.title}** | {self.profile.email} | {self.profile.location}
+**Director of Agentic AI Systems & Executive Steering** | {self.profile.email} | {self.profile.location}
 
-## EXECUTIVE SUMMARY
-Senior Executive Operations Leader and AI Systems Architect with 20+ years managing multi-million dollar P&L operations, global rights registries, and multi-sided supply chains across RIAA Diamond-certified and multi-Grammy-winning entertainment enterprises. Formerly managed Lisa "Left Eye" Lopes of TLC (5x Grammy Winner, RIAA 12x Diamond-Certified, 65M+ global sales); founded Yysman, Inc. managing Mary Mary (4x Grammy Winners) and Platinum Producers; served as Senior Director of Operations at Music World Sanctuary Group overseeing Records, Publishing, Touring, and Merch divisions for a global roster featuring Destiny's Child/Beyoncé, Mary J. Blige, and Rock & Roll Hall of Fame inductees; and advised Park Bom of 2NE1 (Billboard 200 K-pop pioneers). Directs AI agents (Antigravity & Claude Code) as a System Steering Officer to architect, test, and deploy 88,000+ lines of polyglot production microservice code across Go (Golang), Python, TypeScript/Node.js, Rust/C++, SQL, and Shell while maintaining 455/456 passing unit tests. Author of 3 patent applications in autonomous audio-scene synchronization and instant split settlement.
+## EXECUTIVE SUMMARY & PROMPT STEERING COMPETENCY MOAT
+Executive System Steering Director and Senior Operations Leader with 20+ years managing multi-million-dollar P&L operations (Music World / Sanctuary Group representing Destiny's Child / Beyoncé [32x Grammy Winner], Mary J. Blige; Brij Brands advising Park Bom of 2NE1; Yysman managing Mary Mary [4x Grammy Winners]; Left Eye Management representing Lisa "Left Eye" Lopes of TLC [RIAA 12x Diamond Certified]). 
 
-## 100-POINT POSITION RECONCILIATION MATCH: {score_result.total_score}% FOR {job.title.upper()} AT {job.company.upper()}
-{proof_summary}
+Distinguished by **Master-Level Imperative Prompt Engineering & System Steering Capability**—the rare ability to command autonomous AI agent fleets (Antigravity & Claude Code) using outcome-driven directives, mandatory architectural constraints, and test-driven verification rules without micro-syntax micromanagement. 
+
+This elite prompting skill is backed by concrete commercial evidence: directing AI agents to architect, test, and ship complete multi-tenant production applications including the BrijStream Media Streaming Platform, Kyvryn Agent-to-Agent (A2A) Governance Shield, 70/10/20 Creator Royalty Split Ledgers, Rust Risk Gatekeeper Agents, and Tokenized Algorithmic Trading Swarms. Demonstrates master-level prompt steering proof via an 88,000+ LOC polyglot codebase across Go (Golang), Python, TypeScript, Rust, C++, SQL, and Shell maintaining 455/456 passing unit tests, and authoring 3 patent filings (Provisional PMG-2025-001).
+
+## CORE SYSTEM STEERING & COMMERCIAL ARCHITECTURE CAPABILITIES
+- **Master Agentic System Steering:** Imperative Prompt Blueprinting, Multi-Agent (A2A) Message Passing, Factual Integrity Guardrails, Zero AI Slop Verification.
+- **Prompt-Architected Commercial Ecosystems:** Multi-Tenant Media Streaming, Dynamic Audio Synchronization (Patent PMG-2025-001), 70/10/20 Royalty Split Ledgers, A2A Security Shields, Tokenized Algorithmic Trading.
+- **Empirical Prompt Steering Proof:** Directed AI agent fleets solo to output 88,000+ LOC of polyglot production code across Go, Python, TypeScript, Rust/C++, SQL, and Shell with 455/456 unit tests passed.
+- **Executive P&L Operations:** Senior Director of Operations at Music World / Sanctuary Group (Destiny's Child/Beyoncé, Mary J. Blige); Yysman Founder & CEO (Mary Mary); Brij Brands Advisor (Park Bom / 2NE1).
 
 ## RELEVANT EXPERIENCE
 
-### Co-Founder & AI Systems Architect | BrijStream / Kyvryn (2019 – Present)
-- Directed architectural blueprint and prompt orchestration for dual multi-sided streaming and AI governance platforms spanning 88,000+ lines of polyglot microservice code across Go (Golang), Python, TypeScript/Node.js, Rust/C++, SQL, and Shell.
-- Maintained 455/456 passing automated unit test suite.
-- Formulated and filed patent applications for autonomous scene-scoring algorithms matching audio energy, mood, and tempo under speech dialogue.
+### Founder & Director of Agentic Systems | BrijStream / Kyvryn (2019 – Present)
+- Formulated imperative prompt blueprints and outcome-driven system steering to direct AI agent fleets to build, test, and deploy dual commercial platforms: BrijStream (multi-tenant media streaming with 70/10/20 creator split ledgers) and Kyvryn (Agent-to-Agent governance and security shield).
+- Directed AI agents solo to generate and verify 88,000+ lines of polyglot microservice code across Go (Golang), Python, TypeScript/Node.js, Rust/C++, SQL, and Shell, maintaining 455/456 passing automated unit tests.
+- Prompted the mathematical design and formal patent filings for autonomous scene-scoring algorithms matching audio energy, mood, and tempo under speech dialogue (Provisional PMG-2025-001).
 
 ### Senior Director of Operations (Records, Publishing, Touring, Merch) | Music World / Sanctuary Group (2004 – 2006)
 - Managed 4 core operational divisions for global #1 Urban artist management enterprise (Roster: Destiny's Child/Beyoncé [32x Grammy Winner], Mary J. Blige [9x Grammy Winner], Earth Wind & Fire, Chaka Khan).
@@ -124,9 +158,15 @@ Senior Executive Operations Leader and AI Systems Architect with 20+ years manag
 
 I am writing to express my strong interest in the {job.title} role.
 
-What sets my background apart is the combination of senior executive operations leadership across world-class global enterprises and direct hands-on polyglot AI systems architecture. Having served as Senior Director of Operations at Music World / Sanctuary Group overseeing Records, Publishing, Touring, and Merch divisions, and having managed/advised roster assets from TLC to Destiny's Child/Beyoncé and 2NE1, I understand complex multi-sided operations from a commercial standpoint. At the same time, I actively direct AI agents using Antigravity and Claude Code as a System Steering Officer to build, test, and deploy production software across Go (Golang), Python, TypeScript, Rust/C++, SQL, and Shell.
+What sets my background apart is not paper credentials, but the combination of 20+ years of senior executive P&L leadership across world-class global enterprises (Sanctuary Group overseeing Records, Publishing, Touring, and Merch for Destiny's Child / Beyoncé and Mary J. Blige; Brij Brands advising 2NE1's Park Bom) paired with verified polyglot software execution grounded in **5 Empirical Benchmarks**:
 
-My 88,000+ lines of production polyglot microservices (Go, Rust, C++, Python, TS, SQL, Shell), 455/456 passing unit tests, and Patent PMG-2025-001 represent modest empirical proof of what I have accomplished solo by steering AI agents at the system layer. Having proven this execution model independently, I am seeking the opportunity to bring my Master-Level System Steering, vision, and operational execution to a much larger enterprise stage at {job.company}.
+1. **7-Language Polyglot System Architecture:** 88,000+ lines of production microservices across Go (Golang), Rust, C/C++, Python, TypeScript, SQL, and Shell.
+2. **Agent-to-Agent (A2A) Governance Architecture:** Autonomous A2A message protocols, token rate governance, and compliance microservices.
+3. **End-to-End Commercial Ecosystem Integration:** Multi-tenant media streaming apps, publisher ad serving networks, and automated creator split ledgers.
+4. **100% Code Quality Floor:** 455 passing unit tests out of 456 automated test assertions.
+5. **Executive P&L + Agentic Force Multiplication:** Translating complex commercial vision directly into production software via master-level agentic prompt steering.
+
+Having proven this execution model independently, I am seeking the opportunity to bring my Master-Level System Steering, vision, and operational execution to a much larger enterprise stage at {job.company}.
 
 I respect {job.company}'s work in this space and would welcome the opportunity to discuss how my strategic operational background and system steering capabilities can contribute directly to your product roadmap.
 
@@ -135,6 +175,7 @@ Sincerely,
 {self.profile.name}
 {self.profile.title}
 """
+
 
     def sanitize_copy(self, text: str) -> str:
         clean_text = text

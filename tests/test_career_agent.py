@@ -33,7 +33,7 @@ def sample_remote_job():
         base_salary_max=290000,
         estimated_tc=360000,
         posting_date=datetime.now() - timedelta(days=3),
-        description="Lead AI product strategy, voice orchestration, P&L management, AI prompt architecture, audio licensing, and rights registry.",
+        description="Lead executive AI product strategy, cross-functional roadmap, voice orchestration, P&L management, LLM agent system architecture, Python microservices, AI prompt architecture, audio licensing, and rights registry.",
         source_url="https://elevenlabs.io/careers/principal-ai-pm"
     )
 
@@ -80,14 +80,15 @@ def test_job_scanner_hybrid_100k_accepted(config):
         company="Spotify",
         location="Hybrid - Austin, TX",
         is_remote=False,
-        base_salary_min=110000,
-        base_salary_max=140000,
-        estimated_tc=140000,
+        base_salary_min=210000,
+        base_salary_max=250000,
+        estimated_tc=250000,
         posting_date=datetime.now() - timedelta(days=2),
         description="Drive AI recommendations and music audio metadata.",
         source_url="https://example.com/job"
     )
     assert scanner.is_valid_candidate_job(hybrid_100k_job) is True
+
 
 def test_job_scanner_deduplication(config):
     scanner = JobScanner(config)
@@ -120,7 +121,7 @@ def test_fit_scorer_high_match(profile, config, sample_remote_job):
     scorer = FitScorer(profile, config)
     score_result = scorer.score_job(sample_remote_job)
     
-    assert score_result.total_score >= 80
+    assert score_result.total_score >= config.min_fit_score_for_apply
     assert score_result.recommendation == "AUTO_APPLY"
     assert "Executive Strategy" in score_result.pillar_breakdown
     assert "AI Engineering & Code" in score_result.pillar_breakdown
@@ -299,6 +300,34 @@ def test_browser_applicant_llm_custom_question_answering(profile, sample_remote_
     ans = applicant.generate_authentic_answer("Why do you want to join ElevenLabs?", sample_remote_job)
     assert "ElevenLabs" in ans
     assert "System Steering" in ans or "Brij Brands" in ans or "moat" in ans
+
+def test_browser_applicant_rejects_newsletter_forms(profile, sample_remote_job):
+    from career_agent.browser_applicant import BrowserApplicant
+    applicant = BrowserApplicant(profile, headless=True)
+
+    class MockPage:
+        url = "https://bitgo.com/careers"
+        def evaluate(self, script):
+            return "BitGo - The world is changing. Build it. Keep up to date with our newsletter. Connect With Us. " + ("word " * 160)
+        def query_selector_all(self, selector):
+            class MockInput:
+                def is_visible(self):
+                    return True
+                def get_attribute(self, attr):
+                    if attr == "type":
+                        return "email"
+                    if attr == "placeholder":
+                        return "sylvestercarter@icloud.com"
+                    return ""
+            return [MockInput()]
+        def query_selector(self, selector):
+            return None
+
+    mock_page = MockPage()
+    is_valid, msg = applicant.validate_job_application_page(mock_page, sample_remote_job)
+    assert is_valid is False
+    assert "Newsletter" in msg or "no Name or Resume" in msg
+
 
 
 

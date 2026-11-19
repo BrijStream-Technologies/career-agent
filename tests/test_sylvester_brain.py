@@ -42,6 +42,7 @@ def test_sylvester_brain_100_site_training_benchmark(db):
     ]
     res = brain.run_100_site_training_benchmark(mock_enterprises)
     assert res["total_sites_processed"] == 5
-    assert res["questions_harvested"] == 25
-    assert res["certified_95_plus_count"] == 25
+    assert res["questions_harvested"] == 30
+    assert res["certified_95_plus_count"] == 30
     assert "100.0%" in res["certification_rate"]
+
